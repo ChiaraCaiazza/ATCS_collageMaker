@@ -29,6 +29,6 @@ struct layout {
 
 struct userPreference{
 	
-}
+};
 
 #endif
