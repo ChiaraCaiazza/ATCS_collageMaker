@@ -32,7 +32,8 @@ int setLayout ( struct layout* myLayout, int size)
 
 int evaluateNumPhoto(int numPhoto)
 {
-	printf ("\e[35mevluateNumPhoto ancora da fare!!\e[0m\n\n", numPhoto);
+	printf ("\e[35mevluateNumPhoto ancora da fare!!\e[0m\n\n");
+	return 1;
 }
 
 int printASCIIArt(int numPhoto)
@@ -68,7 +69,7 @@ int printASCIIArt(int numPhoto)
 			
 			break;
 		default:
-			printf ("\e[31mError in retrieving ASCII art", numPhoto);
+			printf ("\e[31mError in retrieving ASCII art");
 			return -1;
 	
 	}
