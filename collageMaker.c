@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 /* Bring in gd library functions */
-#include "libgd-2.2.2/src/gd.h"
+#include "libgd-2.2.3/src/gd.h"
 /*include our header files*/
 #include "collageMaker.h"
 #include "ioUtils.h"
@@ -29,10 +29,14 @@ int main() {
 	
 	im1=gdImageCreate(myLayout.photo[0].dim.x, myLayout.photo[0].dim.x);
 	im2=gdImageCreate(myLayout.photo[1].dim.x, myLayout.photo[1].dim.x);
+	
+	
+
 	/* green layout*/
 	ret=gdImageColorAllocate(im, myLayout.col.r, myLayout.col.g, myLayout.col.b);
-	ret=gdImageColorAllocate(im1, 100, 255, 100);
-	ret=gdImageColorAllocate(im2, 200, 255, 200);
-
+	ret=gdImageColorAllocate(im1, 100, 255, 255);
+	ret=gdImageColorAllocate(im2, 200, 255, 200);//
+	
+	gdImageCopy (im,im1,20,20,200,20,120,100);
 	createOutputImage(im);
 }
