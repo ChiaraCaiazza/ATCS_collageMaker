@@ -6,8 +6,8 @@
 
 int setLayout ( struct layout* myLayout, int size)
 {
-	int howMany=2;
 	
+	(*myLayout).number=size;
 	
 	(*myLayout).photo[0].dim.x=300;
 	(*myLayout).photo[0].dim.y=200;
