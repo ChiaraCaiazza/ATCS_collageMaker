@@ -1,8 +1,48 @@
 #include <stdio.h>
+#include <getopt.h>
 
 #include "ioUtils.h"
 
 
+int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSize){
+		
+	int  nValue, index, c;
+	char *tValue, *oValue;
+
+	opterr = 0;
+	nValue=2;
+	tValue=NULL;
+	oValue=NULL;
+	
+	while ((c = getopt (argc, argv, "n:t:o:")) != -1)
+		switch (c){
+		  
+			case 'n':
+				nValue = atoi(optarg);	
+				break;
+			case 't':
+				tValue = optarg;
+				break;
+			case 'o':
+				oValue = optarg;
+				break;
+			case '?':
+				printf("\nFormato comando:\e[36m ./collageMaker  [-n num] [-t extension] [-o output]\e[0m\n");
+				exit(-1);
+			default:
+				abort ();
+		}
+	printf ("\n\nqui\n\nn = %i,t = %s, o = %s\n",nValue, tValue, oValue);
+  
+	(*myLayout).number=nValue;
+	(*myLayout).extension=tValue;
+	(*myLayout).outputFileName=oValue;
+	
+	printf ("\n\nqui\n\n# photo = %i,extensionName = %s, OutputFileName = %s\n",(*myLayout).number, (*myLayout).extension, (*myLayout).outputFileName);
+	
+	return 1;
+	
+}
 
 int setLayout ( struct layout* myLayout, int size){
 	
@@ -19,11 +59,11 @@ int setLayout ( struct layout* myLayout, int size){
 	(*myLayout).layoutDim.x = 630;
 	(*myLayout).layoutDim.y = 220;
 	
-	(*myLayout).col.r=200;
-	(*myLayout).col.g=20;
-	(*myLayout).col.b=0;
+	(*myLayout).backgroundColor.r=200;
+	(*myLayout).backgroundColor.g=20;
+	(*myLayout).backgroundColor.b=0;
 	
-	(*myLayout).number = size;
+	
 	
 	
 	return 1;

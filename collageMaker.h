@@ -24,11 +24,10 @@ struct layout {
 	struct image photo[100];
 	struct position layoutDim;
 	int number;
-	struct colour col;
+	struct colour backgroundColor;
+	char* extension;
+	char* outputFileName;
 };
 
-struct userPreference{
-	
-};
 
 #endif
