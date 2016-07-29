@@ -12,9 +12,10 @@ int main(int argc, char **argv) {
 	struct layout myLayout;
 	int white, ret;
 	/* Declare the image */
-	gdImagePtr im, im1, im2, im3, canvas;
+	gdImagePtr im1, im2, im3, canvas;
 	
 	FILE *in1, *in2, *in3;
+	
 	
 	ret=scanInputValue (argc, argv, &myLayout, sizeof myLayout );
 	if (ret<0)
