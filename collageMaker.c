@@ -10,9 +10,9 @@
 
 int main(int argc, char **argv) {
 	struct layout myLayout;
-	int ret;
+	int white, ret;
 	/* Declare the image */
-	gdImagePtr im, im1, im2, im3, transparent;
+	gdImagePtr im, im1, im2, im3, canvas;
 	
 	FILE *in1, *in2, *in3;
 	
@@ -41,15 +41,12 @@ int main(int argc, char **argv) {
 	im3 = gdImageCreateFromGif(in3);
 	fclose(in2);
 	
-	im = gdImageCreate(myLayout.layoutDim.x, myLayout.layoutDim.x);
-	transparent = gdImageCreate(599, 513);
-	ret=gdImageColorAllocate(im, myLayout.backgroundColor.r, myLayout.backgroundColor.g, myLayout.backgroundColor.b);
-	ret=gdImageColorAllocate(transparent, 0, 0,0);
-	gdImageColorTransparent (transparent, 0);	
+	canvas = gdImageCreate(myLayout.layoutDim.x, myLayout.layoutDim.y);
+	white = gdImageColorAllocate(canvas, 255, 255, 255);
+	gdImageRectangle (	canvas,0, 0, 600, 600, white);
 	
+
+	gdImageCopy (canvas, im2,20,20,0,0, 580, 580);
 	
-	gdImageCopy (im,transparent,20,20,0,0,599,513);
-	gdImageCopy (im,im2,20,20,0,0,599,513);
-	
-	createOutputImage(im);
+	createOutputImage(canvas);
 }
