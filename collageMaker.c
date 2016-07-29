@@ -1,8 +1,7 @@
 /* Bring in standard I/O so we can output the PNG to a file */
 #include <stdio.h>
 /* Bring in gd library functions */
-#include "libgd-2.2.3/src/gd.h"
-
+#include "lib/libgd-2.2.3/src/gd.h"
 /*include our header files*/
 #include "collageMaker.h"
 #include "ioUtils.h"
