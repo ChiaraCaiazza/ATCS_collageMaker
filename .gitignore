@@ -45,8 +45,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-*.jpg
-*.png
+test.jpg
+test.png
 *.exe
 *.stackdump
 
