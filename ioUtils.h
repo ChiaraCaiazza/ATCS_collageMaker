@@ -4,4 +4,5 @@
 
 int retrieveInput (struct layout* , int );
 int createOutputImage(gdImagePtr);
+int scanInputValue (int, char**, struct layout* , int);
 
