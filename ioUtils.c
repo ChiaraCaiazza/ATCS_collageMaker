@@ -67,12 +67,12 @@ int setLayout ( struct layout* myLayout, int size)
 	(*myLayout).photo[1].dim.y=514;
  
 	(*myLayout).photo[0].pos.x=10;
-	(*myLayout).photo[0].dim.y=10;
-	(*myLayout).photo[1].dim.x=600;
-	(*myLayout).photo[1].dim.y=514;
+	(*myLayout).photo[0].pos.y=10;
+	(*myLayout).photo[1].pos.x=600;
+	(*myLayout).photo[1].pos.y=514;
 	
-	(*myLayout).layoutDim.x = 800;
-	(*myLayout).layoutDim.y = 700;
+	(*myLayout).layoutDim.x = 600;
+	(*myLayout).layoutDim.y = 600;
 	
 	(*myLayout).backgroundColor.r=0;
 	(*myLayout).backgroundColor.g=55;
@@ -84,7 +84,8 @@ int setLayout ( struct layout* myLayout, int size)
 
 int evaluateNumPhoto(int numPhoto)
 {
-	printf ("\e[35mevluateNumPhoto ancora da fare!!\e[0m\n\n", numPhoto);
+	printf ("\e[35mevluateNumPhoto ancora da fare!!\e[0m\n\n");
+	return 0;
 }
 
 int printASCIIArt(int numPhoto)
@@ -120,7 +121,7 @@ int printASCIIArt(int numPhoto)
 			
 			break;
 		default:
-			printf ("\e[31mError in retrieving ASCII art", numPhoto);
+			printf ("\e[31mError in retrieving ASCII art");
 			return -1;
 	
 	}
@@ -168,6 +169,7 @@ int retrieveInput(struct layout* myLayout, int size)
 		printf("Error!");
 		return -1;
 	}
+	return 0;
 }
 
 
