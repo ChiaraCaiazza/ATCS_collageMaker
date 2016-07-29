@@ -44,7 +44,9 @@ int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSi
 	
 }
 
-int setLayout ( struct layout* myLayout, int size){
+int setLayout ( struct layout* myLayout, int size)
+{
+	
 	
 	(*myLayout).photo[0].dim.x=300;
 	(*myLayout).photo[0].dim.y=200;
@@ -63,16 +65,13 @@ int setLayout ( struct layout* myLayout, int size){
 	(*myLayout).backgroundColor.g=20;
 	(*myLayout).backgroundColor.b=0;
 	
-	
-	
-	
+
 	return 1;
 }
 
 int evaluateNumPhoto(int numPhoto)
 {
-	printf ("\e[35mevluateNumPhoto ancora da fare!!\e[0m\n\n");
-	return 1;
+	printf ("\e[35mevluateNumPhoto ancora da fare!!\e[0m\n\n", numPhoto);
 }
 
 int printASCIIArt(int numPhoto)
@@ -108,7 +107,7 @@ int printASCIIArt(int numPhoto)
 			
 			break;
 		default:
-			printf ("\e[31mError in retrieving ASCII art");
+			printf ("\e[31mError in retrieving ASCII art", numPhoto);
 			return -1;
 	
 	}
