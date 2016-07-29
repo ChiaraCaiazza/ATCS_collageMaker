@@ -71,8 +71,8 @@ int setLayout ( struct layout* myLayout, int size)
 	(*myLayout).photo[1].pos.x=600;
 	(*myLayout).photo[1].pos.y=514;
 	
-	(*myLayout).layoutDim.x = 600;
-	(*myLayout).layoutDim.y = 600;
+	(*myLayout).layoutDim.x = 800;
+	(*myLayout).layoutDim.y = 800;
 	
 	(*myLayout).backgroundColor.r=0;
 	(*myLayout).backgroundColor.g=55;
@@ -191,7 +191,7 @@ int createOutputImage(gdImagePtr im){
 
 	/* Output the same image in JPEG format, using the default
     JPEG quality setting. */
-	gdImageJpeg(im, jpegout, -1);
+	gdImageJpeg(im, jpegout, 95);
 	
 	gdImageGif(im, pngout);
 

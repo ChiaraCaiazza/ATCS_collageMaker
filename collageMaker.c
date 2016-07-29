@@ -10,7 +10,7 @@
 
 int main(int argc, char **argv) {
 	struct layout myLayout;
-	int white, ret;
+	int white, black, ret;
 	/* Declare the image */
 	gdImagePtr im, im1, im2, im3, canvas;
 	
@@ -34,19 +34,20 @@ int main(int argc, char **argv) {
 	fclose(in1);
 	
 	in2 = fopen("inputImages/immagineJPEG.jpg", "rb");
-	im2 = gdImageCreateFromJpeg(in2);
+	im2 = gdImageCreateFromJpegEx(in2, 0);
 	fclose(in2);
 	
 	in3 = fopen("inputImages/immagineGIF.gif", "rb");
 	im3 = gdImageCreateFromGif(in3);
 	fclose(in2);
 	
-	canvas = gdImageCreate(myLayout.layoutDim.x, myLayout.layoutDim.y);
-	white = gdImageColorAllocate(canvas, 255, 255, 255);
-	gdImageRectangle (	canvas,0, 0, 600, 600, white);
 	
-
-	gdImageCopy (canvas, im2,20,20,0,0, 580, 580);
+	canvas = gdImageCreate(myLayout.layoutDim.x, myLayout.layoutDim.y);
+	black = gdImageColorAllocate(canvas, 0, 0, 0, 0.5);
+	white = gdImageColorAllocate(canvas, 255, 255, 255, 0.5);
+	gdImageFilledRectangle (	canvas, 20, 20, 580, 580, white);
+	
+	//gdImageCopy (canvas, im2, 20, 20,0,0, 500, 375);
 	
 	createOutputImage(canvas);
 }
