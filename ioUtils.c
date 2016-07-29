@@ -4,10 +4,7 @@
 
 
 
-int setLayout ( struct layout* myLayout, int size)
-{
-	int howMany=2;
-	
+int setLayout ( struct layout* myLayout, int size){
 	
 	(*myLayout).photo[0].dim.x=300;
 	(*myLayout).photo[0].dim.y=200;
@@ -25,6 +22,8 @@ int setLayout ( struct layout* myLayout, int size)
 	(*myLayout).col.r=200;
 	(*myLayout).col.g=20;
 	(*myLayout).col.b=0;
+	
+	(*myLayout).number = size;
 	
 	
 	return 1;
