@@ -6,7 +6,7 @@
 
 int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSize){
 		
-	int  nValue, index, c;
+	int  nValue, c;
 	char *tValue, *oValue;
 
 	opterr = 0;
@@ -24,7 +24,7 @@ int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSi
 					exit(1);
 				}
 				else
-					if (nValue<MIN_NUM_PHOTO& nValue!=0){
+					if ((nValue<MIN_NUM_PHOTO) & (nValue!=0)){
 						printf("Non e' possibile inserire meno di 2 foto\n\n");
 						exit(-1);
 					}
@@ -131,9 +131,7 @@ int printASCIIArt(int numPhoto)
 int retrieveInput(struct layout* myLayout, int size)
 {
 	int ret;
-	int numPhoto;
 	
-	numPhoto=0;
 	printf ("\e[36m\nBenvenuto in collage maker\e[0m\n\n");
 	
 	printf("Questi sono i layout disponibili per %i foto", (*myLayout).number);
@@ -193,12 +191,13 @@ int createOutputImage(gdImagePtr im){
     JPEG quality setting. */
 	gdImageJpeg(im, jpegout, -1);
 	
-	gdImageGif(im, pngout);
+	gdImageGif(im, gifout);
 
 	/* Close the files. */
 	fclose(pngout);
 	fclose(jpegout);
-
+	fclose(gifout);
+	
 	/* Destroy the image in memory. */
 	gdImageDestroy(im);
 	
