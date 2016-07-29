@@ -12,8 +12,10 @@ int main(int argc, char **argv) {
 	struct layout myLayout;
 	int ret;
 	/* Declare the image */
-	gdImagePtr im, im1, im2;
-
+	gdImagePtr im, im1, im2, im3, transparent;
+	
+	FILE *in1, *in2, *in3;
+	
 	ret=scanInputValue (argc, argv, &myLayout, sizeof myLayout );
 	if (ret<0)
 	{
@@ -26,15 +28,28 @@ int main(int argc, char **argv) {
 		printf("Error!");
 	}
 	
+	
+	in1 = fopen("inputImages/immaginePNG.png", "rb");
+	im1 = gdImageCreateFromPng(in1);
+	fclose(in1);
+	
+	in2 = fopen("inputImages/immagineJPEG.jpg", "rb");
+	im2 = gdImageCreateFromJpeg(in2);
+	fclose(in2);
+	
+	in3 = fopen("inputImages/immagineGIF.gif", "rb");
+	im3 = gdImageCreateFromGif(in3);
+	fclose(in2);
+	
 	im = gdImageCreate(myLayout.layoutDim.x, myLayout.layoutDim.x);
-	im1=gdImageCreate(myLayout.photo[0].dim.x, myLayout.photo[0].dim.x);
-	im2=gdImageCreate(myLayout.photo[1].dim.x, myLayout.photo[1].dim.x);
-	
-	/* green layout*/
+	transparent = gdImageCreate(599, 513);
 	ret=gdImageColorAllocate(im, myLayout.backgroundColor.r, myLayout.backgroundColor.g, myLayout.backgroundColor.b);
-	ret=gdImageColorAllocate(im1, 100, 255, 255);
-	ret=gdImageColorAllocate(im2, 200, 255, 200);//
+	ret=gdImageColorAllocate(transparent, 0, 0,0);
+	gdImageColorTransparent (transparent, 0);	
 	
-	gdImageCopy (im,im1,20,20,200,20,120,100);
+	
+	gdImageCopy (im,transparent,20,20,0,0,599,513);
+	gdImageCopy (im,im2,20,20,0,0,599,513);
+	
 	createOutputImage(im);
 }

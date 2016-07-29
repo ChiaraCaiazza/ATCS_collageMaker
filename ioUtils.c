@@ -61,22 +61,22 @@ int setLayout ( struct layout* myLayout, int size)
 {
 	
 	
-	(*myLayout).photo[0].dim.x=300;
-	(*myLayout).photo[0].dim.y=200;
-	(*myLayout).photo[1].dim.x=300;
-	(*myLayout).photo[1].dim.y=200;
+	(*myLayout).photo[0].dim.x=700;
+	(*myLayout).photo[0].dim.y=500;
+	(*myLayout).photo[1].dim.x=600;
+	(*myLayout).photo[1].dim.y=514;
  
 	(*myLayout).photo[0].pos.x=10;
 	(*myLayout).photo[0].dim.y=10;
-	(*myLayout).photo[1].dim.x=320;
-	(*myLayout).photo[1].dim.y=10;
+	(*myLayout).photo[1].dim.x=600;
+	(*myLayout).photo[1].dim.y=514;
 	
-	(*myLayout).layoutDim.x = 630;
-	(*myLayout).layoutDim.y = 220;
+	(*myLayout).layoutDim.x = 800;
+	(*myLayout).layoutDim.y = 700;
 	
-	(*myLayout).backgroundColor.r=200;
-	(*myLayout).backgroundColor.g=20;
-	(*myLayout).backgroundColor.b=0;
+	(*myLayout).backgroundColor.r=0;
+	(*myLayout).backgroundColor.g=55;
+	(*myLayout).backgroundColor.b=25;
 	
 
 	return 1;
@@ -172,7 +172,7 @@ int retrieveInput(struct layout* myLayout, int size)
 
 
 int createOutputImage(gdImagePtr im){
-	FILE *pngout, *jpegout;
+	FILE *pngout, *jpegout, *gifout;
 	
 	/* Open a file for writing. "wb" means "write binary", important
     under MSDOS, harmless under Unix. */
@@ -180,6 +180,9 @@ int createOutputImage(gdImagePtr im){
 
 	/* Do the same for a JPEG-format file. */
 	jpegout = fopen("test.jpg", "wb");
+	
+	/* Do the same for a JPEG-format file. */
+	gifout = fopen("test.gif", "wb");
 
 	/* Output the image to the disk file in PNG format. */
 	gdImagePng(im, pngout);
@@ -187,6 +190,8 @@ int createOutputImage(gdImagePtr im){
 	/* Output the same image in JPEG format, using the default
     JPEG quality setting. */
 	gdImageJpeg(im, jpegout, -1);
+	
+	gdImageGif(im, pngout);
 
 	/* Close the files. */
 	fclose(pngout);
