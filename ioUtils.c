@@ -16,9 +16,22 @@ int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSi
 	
 	while ((c = getopt (argc, argv, "n:t:o:")) != -1)
 		switch (c){
-		  
 			case 'n':
-				nValue = atoi(optarg);	
+				nValue = atoi(optarg);
+				
+				if (nValue>MAX_NUM_PHOTO){
+					printf("Non e' possibile inserire piu' di 6 foto\n\n");
+					exit(1);
+				}
+				else
+					if (nValue<MIN_NUM_PHOTO& nValue!=0){
+						printf("Non e' possibile inserire meno di 2 foto\n\n");
+						exit(-1);
+					}
+					else if (nValue==0) {
+						printf("Inserire un carattere valido\n\n");
+						exit(-1);
+						}
 				break;
 			case 't':
 				tValue = optarg;
@@ -122,7 +135,15 @@ int retrieveInput(struct layout* myLayout, int size)
 	numPhoto=0;
 	printf ("\e[36m\nBenvenuto in collage maker\e[0m\n\n");
 	
-	while (1) {
+	printf("Questi sono i layout disponibili per %i foto", (*myLayout).number);
+	
+	ret = printASCIIArt((*myLayout).number);
+	if (ret<0)
+	{
+		printf ("\e[31mError: ASCII art not found\e[0m\n\n");
+	}
+	
+	/*while (1) {
 		printf("inserire il numero di foto che si desidera comporre e premere invio:");
 		scanf ("%i", &numPhoto);
 		ret = evaluateNumPhoto(numPhoto);
@@ -131,19 +152,12 @@ int retrieveInput(struct layout* myLayout, int size)
 		
 		if (ret<1)
 			printf("i caratteri immessi non sono validi\n\n");
-		else if (numPhoto>=MAX_NUM_PHOTO)
-			printf("Non è possibile inserire più di 6 foto\n\n");
-		else
-			printf("Non è possibile inserire meno di 2 foto\n\n");
-	};
+		
+
+			
+	};*/
 	
-	(*myLayout).number= numPhoto;
-	printf("\nQuesti sono i layout disponibili:\n");
-	ret = printASCIIArt(numPhoto);
-	if (ret<0)
-	{
-		printf ("\e[31mError: ASCII art not found\e[0m\n\n");
-	}
+	
 
 
 	printf ("\e[35mAttenzione!!\n\nBisogna finire di implementare ancora tutta la parte di raccolta proferenze dall'utente!!\e[0m\n\n");
