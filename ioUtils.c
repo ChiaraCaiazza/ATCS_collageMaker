@@ -21,16 +21,16 @@ int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSi
 				
 				if (nValue>MAX_NUM_PHOTO){
 					printf("Non e' possibile inserire piu' di 6 foto\n\n");
-					exit(1);
+					return -1;
 				}
 				else
 					if ((nValue<MIN_NUM_PHOTO) & (nValue!=0)){
 						printf("Non e' possibile inserire meno di 2 foto\n\n");
-						exit(-1);
+						return -1;
 					}
 					else if (nValue==0) {
 						printf("Inserire un carattere valido\n\n");
-						exit(-1);
+						return -1;
 						}
 				break;
 			case 't':
@@ -41,26 +41,23 @@ int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSi
 				break;
 			case '?':
 				printf("\nFormato comando:\e[36m ./collageMaker  [-n num] [-t extension] [-o output]\e[0m\n");
-				exit(-1);
+				return -1;
 			default:
-				abort ();
-		}
-	printf ("\n\nqui\n\nn = %i,t = %s, o = %s\n",nValue, tValue, oValue);
-  
+				return -1;
+  		}
+
 	(*myLayout).number=nValue;
 	(*myLayout).extension=tValue;
 	(*myLayout).outputFileName=oValue;
 	
-	printf ("\n\nqui\n\n# photo = %i,extensionName = %s, OutputFileName = %s\n",(*myLayout).number, (*myLayout).extension, (*myLayout).outputFileName);
+	printf ("# photo(-n) = %i, extensionName(-t) = %s, OutputFileName(-o) = %s\n",(*myLayout).number, (*myLayout).extension, (*myLayout).outputFileName);
 	
 	return 1;
-	
 }
+
 
 int setLayout ( struct layout* myLayout, int size)
 {
-	
-	
 	(*myLayout).photo[0].dim.x=700;
 	(*myLayout).photo[0].dim.y=500;
 	(*myLayout).photo[1].dim.x=600;
@@ -71,8 +68,8 @@ int setLayout ( struct layout* myLayout, int size)
 	(*myLayout).photo[1].pos.x=600;
 	(*myLayout).photo[1].pos.y=514;
 	
-	(*myLayout).layoutDim.x = 800;
-	(*myLayout).layoutDim.y = 800;
+	(*myLayout).layoutDim.x = 2500;
+	(*myLayout).layoutDim.y = 2500;
 	
 	(*myLayout).backgroundColor.r=0;
 	(*myLayout).backgroundColor.g=55;
@@ -142,22 +139,6 @@ int retrieveInput(struct layout* myLayout, int size)
 		printf ("\e[31mError: ASCII art not found\e[0m\n\n");
 	}
 	
-	/*while (1) {
-		printf("inserire il numero di foto che si desidera comporre e premere invio:");
-		scanf ("%i", &numPhoto);
-		ret = evaluateNumPhoto(numPhoto);
-		if (numPhoto<=MAX_NUM_PHOTO && numPhoto>=MIN_NUM_PHOTO & ret>0)
-			break;
-		
-		if (ret<1)
-			printf("i caratteri immessi non sono validi\n\n");
-		
-
-			
-	};*/
-	
-	
-
 
 	printf ("\e[35mAttenzione!!\n\nBisogna finire di implementare ancora tutta la parte di raccolta proferenze dall'utente!!\e[0m\n\n");
 	
@@ -170,36 +151,3 @@ int retrieveInput(struct layout* myLayout, int size)
 	return 0;
 }
 
-
-int createOutputImage(gdImagePtr im){
-	FILE *pngout, *jpegout, *gifout;
-	
-	/* Open a file for writing. "wb" means "write binary", important
-    under MSDOS, harmless under Unix. */
-	pngout = fopen("test.png", "wb");
-
-	/* Do the same for a JPEG-format file. */
-	jpegout = fopen("test.jpg", "wb");
-	
-	/* Do the same for a JPEG-format file. */
-	gifout = fopen("test.gif", "wb");
-
-	/* Output the image to the disk file in PNG format. */
-	gdImagePng(im, pngout);
-
-	/* Output the same image in JPEG format, using the default
-    JPEG quality setting. */
-	gdImageJpeg(im, jpegout, 95);
-	
-	gdImageGif(im, gifout);
-
-	/* Close the files. */
-	fclose(pngout);
-	fclose(jpegout);
-	fclose(gifout);
-	
-	/* Destroy the image in memory. */
-	gdImageDestroy(im);
-	
-	return 1;
-}
