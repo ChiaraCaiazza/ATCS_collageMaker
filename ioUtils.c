@@ -1,8 +1,78 @@
-#include <stdio.h>
 #include <getopt.h>
+
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "ioUtils.h"
 
+int setLayout ( struct layout*, int);
+int printASCIIArt(int);
+int extractExtension (char* photoName);
+
+
+int retrieveInput(struct layout* myLayout, int size)
+{
+	int ret, inserted;
+	char photoName[50];
+	
+	printf ("\e[36m\nBenvenuto in collage maker\e[0m\n\n");
+	
+	printf("Questi sono i layout disponibili per %i foto", (*myLayout).number);
+	
+	ret = printASCIIArt((*myLayout).number);
+	if (ret<0)
+	{
+		printf ("\e[31mError: ASCII art not found\e[0m\n\n");
+	}
+	
+
+	printf ("\e[35mAttenzione!!\n\nBisogna finire di implementare ancora tutta la parte di raccolta proferenze dall'utente!!\e[0m\n\n");
+	
+	ret= setLayout(myLayout, size);
+	if (ret<0)
+	{
+		printf("Error!");
+		return -1;
+	}
+
+	printf("\e[35m Chiedere quale layout ed il colore\e[0m\n\n");
+	
+	
+	struct collageMakerImage temp[(*myLayout).number];
+	(*myLayout).arrayOfImages= temp;
+
+	inserted=0;
+	while(inserted!=(*myLayout).number){
+		struct stat fileStat;
+		VipsImage *im;
+
+		printf("inserireil nome della foto [q per terminare]\n");
+		scanf ("%s", photoName);
+		printf("\n\n");
+		if (strcmp(photoName,"q") == 0){
+			printf("\e[91m\nOperazione annullata\n\n\e[0m");
+			return -1;
+		}
+		ret=extractExtension(photoName);
+		if (ret<0)
+			continue;
+		if(stat(photoName,&fileStat) < 0) {
+   			printf("\e[91m\nErrore: file inesistente.\n\n\e[0m");
+        		continue;
+		}
+ 		
+    
+		im = vips_image_new_from_file (photoName, NULL);
+		(*myLayout).arrayOfImages[inserted].image=im;
+		inserted+=1;
+
+	}
+	
+	
+	//vips_image_write_to_file ((*myLayout).arrayOfImages[0].image, "testarray.jpg", NULL);
+	return 0;
+}
 
 int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSize){
 		
@@ -56,17 +126,32 @@ int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSi
 }
 
 
+void printSummary(struct layout* myLayout){
+
+	printf("Summary/n");
+	printf("\tNumero di foto da stampare:\t%i\n", (*myLayout).number);
+	printf("\tNome del file finale:\t%s.%s\n", (*myLayout).outputFileName, (*myLayout).extension);
+}
+
+
+
+
+
+
 int setLayout ( struct layout* myLayout, int size)
 {
-	(*myLayout).photo[0].dim.x=700;
-	(*myLayout).photo[0].dim.y=500;
-	(*myLayout).photo[1].dim.x=600;
-	(*myLayout).photo[1].dim.y=514;
+	
+/*
+	(*myLayout).arrayOfImages[0].dim.x=700;
+	(*myLayout).arrayOfImages[0].dim.y=500;
+	(*myLayout).arrayOfImages[1].dim.x=600;
+	(*myLayout).arrayOfImages[1].dim.y=514;
  
-	(*myLayout).photo[0].pos.x=10;
-	(*myLayout).photo[0].pos.y=10;
-	(*myLayout).photo[1].pos.x=600;
-	(*myLayout).photo[1].pos.y=514;
+	(*myLayout).arrayOfImages[0].pos.x=10;
+	(*myLayout).arrayOfImages[0].pos.y=10;
+	(*myLayout).arrayOfImages[1].pos.x=600;
+	(*myLayout).arrayOfImages[1].pos.y=514;
+
 	
 	(*myLayout).layoutDim.x = 2500;
 	(*myLayout).layoutDim.y = 2500;
@@ -75,25 +160,19 @@ int setLayout ( struct layout* myLayout, int size)
 	(*myLayout).backgroundColor.g=55;
 	(*myLayout).backgroundColor.b=25;
 	
-
+*/
 	return 1;
 }
 
-int evaluateNumPhoto(int numPhoto)
-{
-	printf ("\e[35mevluateNumPhoto ancora da fare!!\e[0m\n\n");
-	return 0;
-}
 
-int printASCIIArt(int numPhoto)
-{
+int printASCIIArt(int numPhoto){
 	switch (numPhoto)
 	{
 		case 2:
 			printf("\nA):\e[34m\n\t\t _____________\n\t\t|      |      |\n\t\t|      |      |\n\t\t|      |      |\n\t\t|      |      |\n\t\t|      |      |\n\t\t|______|______|\n\n\e[0m");
 			printf("\nB):\e[34m\n\t\t _____________\n\t\t|             |\n\t\t|             |\n\t\t|             |\n\t\t|_____________|\n\t\t|             |\n\t\t|             |\n\t\t|             |\n\t\t|_____________|\n\n\e[0m");
 			printf("\nC):\e[34m\n\t\t _________________\n\t\t| ______   ______ |\n\t\t||      | |      ||\n\t\t||      | |      ||\n\t\t||      | |      ||\n\t\t||      | |      ||\n\t\t||      | |      ||\n\t\t||______| |______||\n\t\t|_________________|\n\n\e[0m");
-			printf("\nC):\e[34m\n\t\t ______________\n\t\t| ____________ |\n\t\t||            ||\n\t\t||            ||\n\t\t||            ||\n\t\t||____________||\n\t\t| ____________ |\n\t\t||            ||\n\t\t||            ||\n\t\t||            ||\n\t\t||____________||\n\t\t|______________|\n\n\e[0m");
+			printf("\nD):\e[34m\n\t\t ______________\n\t\t| ____________ |\n\t\t||            ||\n\t\t||            ||\n\t\t||            ||\n\t\t||____________||\n\t\t| ____________ |\n\t\t||            ||\n\t\t||            ||\n\t\t||            ||\n\t\t||____________||\n\t\t|______________|\n\n\e[0m");
 			
 			break;
 		case 3:
@@ -125,29 +204,23 @@ int printASCIIArt(int numPhoto)
 	return 1;
 }
 
-int retrieveInput(struct layout* myLayout, int size)
-{
-	int ret;
-	
-	printf ("\e[36m\nBenvenuto in collage maker\e[0m\n\n");
-	
-	printf("Questi sono i layout disponibili per %i foto", (*myLayout).number);
-	
-	ret = printASCIIArt((*myLayout).number);
-	if (ret<0)
-	{
-		printf ("\e[31mError: ASCII art not found\e[0m\n\n");
-	}
-	
 
-	printf ("\e[35mAttenzione!!\n\nBisogna finire di implementare ancora tutta la parte di raccolta proferenze dall'utente!!\e[0m\n\n");
-	
-	ret= setLayout(myLayout, size);
-	if (ret<0)
-	{
-		printf("Error!");
+
+int extractExtension (char* photoName){
+	char* extension;
+
+  	extension = strrchr (photoName, '.');
+
+	if (extension == NULL){
+		printf("\e[91m\nErrore: questo file non ha alcuna estensione.\n\n\e[0m");
 		return -1;
 	}
-	return 0;
+	if ((strcmp(extension,".png")!=0) && (strcmp(extension,".jpeg")!=0) &&
+	    (strcmp(extension,".jpg")!=0) && (strcmp(extension,".gif")!=0)){
+		printf("\e[91m\nEstensione file non valida. sono ammesse solo foto in formato PNG, GIF e JPEG.\n\n\e[0m");
+		return -1;
+	}
+
+	return 1;
 }
 

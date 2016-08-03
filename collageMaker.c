@@ -1,9 +1,3 @@
-/* Bring in standard I/O */
-#include <stdio.h>
-
-/*include vips*/
-#include <vips/vips.h>
-
 /*include our header files*/
 #include "collageMaker.h"
 #include "ioUtils.h"
@@ -22,13 +16,16 @@ exec:
 
 */
 
+
+
 int main(int argc, char **argv) {
 	int ret;
 	struct layout myLayout;
-	VipsImage *im1, *im2, *im3;    
-	double ink;
+	//VipsImage *im1, *im2, *im3;    
+	//double ink;
 
-	ink=0;
+	
+	//ink=0;
 
 
 	if (vips_init (argv[0])){
@@ -51,7 +48,7 @@ int main(int argc, char **argv) {
 		printf("Error!");
 		return -1;
 	}
-
+/*
 
 	im1 = vips_image_new_from_file ("inputImages/immaginePNG.png", NULL);
 	im2 = vips_image_new_from_file ("inputImages/immagineJPEG.jpg", NULL);
@@ -70,7 +67,21 @@ int main(int argc, char **argv) {
 	vips_image_write_to_file (im2, "test2.png", NULL);
 	vips_image_write_to_file (im3, "test3.png", NULL);
 	
+*/
+	printSummary(&myLayout);
+	
+
+	char* out=malloc(( strlen(myLayout.outputFileName)+strlen(myLayout.extension)+1));
+	out = strcat(myLayout.outputFileName,".") ;
+	out = strcat(out,myLayout.extension);
+
+	vips_image_write_to_file (myLayout.arrayOfImages[0].image, out, NULL);
+
 	vips_shutdown();
 
 	return 0;
 }
+
+
+	
+	
