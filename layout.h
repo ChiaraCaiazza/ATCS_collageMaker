@@ -8,10 +8,9 @@ struct frame_t
 	int width;		
 	int height;
 	int rot;				//rotation angle
-	struct frame_t *next;		//pointer to the next frame
 };
 
-void append_frame(struct frame_t * head, config_setting_t * frame_config);
 struct frame_t* get_frames(int num_frame, int id_layout);
-void destroy_frames(struct frame_t * head);
+void destroy_frames(struct frame_t * list);
 void print_layout(int num_frame);
+double* frame_width_over_height(struct frame_t *list, int num_elem);
