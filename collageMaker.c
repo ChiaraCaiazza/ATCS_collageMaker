@@ -2,7 +2,8 @@
 #include "collageMaker.h"
 #include "ioUtils.h"
 #include "layout.h"
-//#include "imageInfo.h"
+#include "imageInfo.h"
+
 
 /*
 comando per debian :
