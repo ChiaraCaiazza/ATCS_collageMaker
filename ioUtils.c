@@ -104,6 +104,10 @@ int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSi
 				break;
 			case 't':
 				tValue = optarg;
+				if ((strcmp(tValue,"png")!=0) && (strcmp(tValue,"jpg")!=0)){
+					printf("\e[36m%s\e[0m non e' un nome valido per l'estensione della foto prodotta.\nUseremo l'estensione di default \e[36m\"png\"\e[0m\n", tValue);
+					tValue="png";
+				}
 				break;
 			case 'o':
 				oValue = optarg;
