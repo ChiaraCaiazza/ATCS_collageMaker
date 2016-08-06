@@ -61,6 +61,3 @@ min_width(struct collageMakerImage *list, int num_elem){
 	return i_app;
 }
 
-
-
-
