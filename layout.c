@@ -25,11 +25,11 @@ struct frame_t* get_frames(int num_frame, int id_layout)
 	for(i = 0; i < frame_length; i++)
 	{
 		frame = config_setting_get_elem(frame_list, i);
-		config_setting_lookup_int(frame_config, "pos_x", &(result[i]->pos_x));
-		config_setting_lookup_int(frame_config, "pos_y", &(result[i]->pos_y));
-		config_setting_lookup_int(frame_config, "width", &(result[i]->width));
-		config_setting_lookup_int(frame_config, "height", &(result[i]->height));
-		config_setting_lookup_int(frame_config, "rot", &(result[i]->rot));
+		config_setting_lookup_int(frame, "pos_x", &(result[i].pos_x));
+		config_setting_lookup_int(frame, "pos_y", &(result[i].pos_y));
+		config_setting_lookup_int(frame, "width", &(result[i].width));
+		config_setting_lookup_int(frame, "height", &(result[i].height));
+		config_setting_lookup_int(frame, "rot", &(result[i].rot));
 	}
 
 	
@@ -73,7 +73,7 @@ double* frame_width_over_height(struct frame_t *list, int num_elem){
 	double* ret = (double*) malloc (sizeof(double) * num_elem);
 	for (i=0; i<num_elem; i++)
 	{
-		ret[i] = (double)(list[i].width) / (double)(list[i].heigth);
+		ret[i] = (double)(list[i].width) / (double)(list[i].height);
 	}
 	return ret;
 }
