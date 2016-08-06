@@ -24,3 +24,4 @@ int min_height(struct collageMakerImage* list, int num_elem);
 
 //the function returns the index into the array corresponding to the element with the minimum width
 int min_width(struct collageMakerImage* list, int num_elem);
+
