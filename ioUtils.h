@@ -1,4 +1,5 @@
 #include "collageMaker.h"
+#include <ctype.h>
 
 
 int retrieveInput (struct layout* , int );
