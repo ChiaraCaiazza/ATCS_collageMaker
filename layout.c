@@ -37,6 +37,25 @@ struct frame_t* get_frames(int num_frame, int id_layout)
 	return result;
 }
 
+int get_num_layouts(int num_frame)
+{
+	config_setting_t *category_list, *category, *layout_list;
+	config_t layout_config;
+	int num_layouts;
+
+	config_init(&layout_config);
+	config_read_file(&layout_config, "./layout.cfg");
+	
+	category_list = config_lookup(&layout_config, "application.layout_group");
+	category = config_setting_get_elem(category_list, num_frame - MIN_NUM_FRAME);
+	
+	layout_list = config_setting_get_member(category, "layout");
+	num_layouts = config_setting_length(layout_list);
+	
+	config_destroy(&layout_config);
+	return num_layouts;
+}
+
 void destroy_frames(struct frame_t *list)
 {
 	free(list);
@@ -62,6 +81,7 @@ void print_layout(int num_frame)
 	{
 		layout = config_setting_get_elem(layout_list, i);
 		config_setting_lookup_string(layout, "image", &ascii_image);
+		printf(" %c)\n", 'A' + i);
 		printf("%s\n", ascii_image);
 	}
 	

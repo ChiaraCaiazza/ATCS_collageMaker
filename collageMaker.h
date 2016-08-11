@@ -34,7 +34,7 @@ struct layout {
 	int number;
 	char* extension;
 	char* outputFileName;
-	char* layoutID;
+	char layoutID;
 	struct coord layoutDim;
 	struct colour backgroundColor;
 	struct collageMakerImage *arrayOfImages;
