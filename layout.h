@@ -11,6 +11,7 @@ struct frame_t
 };
 
 struct frame_t* get_frames(int num_frame, int id_layout);
+int get_num_layouts(int num_frame);
 void destroy_frames(struct frame_t * list);
 void print_layout(int num_frame);
 double* frame_width_over_height(struct frame_t *list, int num_elem);

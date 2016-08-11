@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 		return -1;
 
 	
-	ret=retrieveInput(&myLayout, sizeof myLayout);
+	ret = retrieveInput(&myLayout, sizeof myLayout);
 	if (ret<0)
 		return -1;
 
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 	printSummary(&myLayout);
 
 	
-	struct frame_t *frames = get_frames(2, 1); //?? che vogliono dire i parametri?
+	struct frame_t *frames = get_frames(2, 1);
 	destroy_frames(frames);
 
 	vips_shutdown();
