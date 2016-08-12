@@ -7,30 +7,33 @@
 #include "ioUtils.h"
 #include "layout.h"
 
-int setLayout ( struct layout*, int);
+
+int setLayout ( struct layout_t*, int);
 int extractExtension (char* photoName);
 
 
-int retrieveInput(struct layout* myLayout, int size){
+int retrieveInput(struct collage_t * myCollage, int size){
 	int ret, i;
 	char photoName[50];
 	
 
 	printf ("\e[36;1m\nBenvenuto in collage maker\e[0m\n\n");
 	
-	printf("Premere un tasto per visualizzare i layout disponibili per %i foto\n", myLayout->number);
+	printf("Premere un tasto per visualizzare i layout disponibili per %i foto\n", myCollage->num_images);
 	getchar();
 	
-	print_layout(myLayout->number);
-	int num_layouts = get_num_layouts(myLayout->number);
+	print_layouts(myCollage->num_images);
+	int num_layouts = get_num_layouts(myCollage->num_images);
 
 	printf ("\e[35mAttenzione!!\n\nBisogna finire di implementare ancora tutta la parte di raccolta proferenze dall'utente!!\e[0m\n\n");
 	
+	/*
 	ret= setLayout(myLayout, size);
 	if (ret<0){
 		printf("Error!");
 		return -1;
 	}
+	*/
 
 	printf("\e[35m Chiedere quale layout ed il colore\e[0m\n\n");
 	
@@ -43,19 +46,23 @@ int retrieveInput(struct layout* myLayout, int size){
 			printf("Layout scelto: %c\n", layout_id);
 			int layout_index = layout_id - 'a';
 			if( layout_index < 0 || layout_index > num_layouts)
+			{
 				printf("ERROR! Type a letter between 'a' and '%c' \n", 'a' + num_layouts - 1);
+			}
 			else
+			{
+				get_layout(&(myCollage->layout), myCollage->num_images, layout_index);
 				break;
+			}
 		}
 	}
 	
 	
-	myLayout->arrayOfImages = (struct collageMakerImage*)malloc(sizeof(struct collageMakerImage) * myLayout->number);
+	myCollage->images = (VipsImage**)malloc(sizeof(VipsImage*) * myCollage->num_images);
 
 	i=0;
-	while(i != myLayout->number){
+	while(i != myCollage->num_images){
 		struct stat fileStat;
-		VipsImage *im = NULL;
 
 		printf("Inserire il nome della foto [q per terminare]\n");
 		scanf ("%s", photoName);
@@ -75,9 +82,7 @@ int retrieveInput(struct layout* myLayout, int size){
 		}
  		
     		
-		im = vips_image_new_from_file (photoName, NULL);
-
-		myLayout->arrayOfImages[i].image = im;
+		myCollage->images[i] = vips_image_new_from_file (photoName, NULL);
 
 		i++;
 	}
@@ -86,7 +91,7 @@ int retrieveInput(struct layout* myLayout, int size){
 }
 
 
-int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSize){	
+int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int collage_size){	
 	int  nValue, c;
 	char *tValue, *oValue;
 
@@ -150,27 +155,27 @@ int scanInputValue (int argc, char** argv, struct layout* myLayout, int layoutSi
 	if (c==1)
 		printf("\nFormato comando:\e[36m ./collageMaker  [-n num] [-t extension] [-o output]\e[0m\n");
 
-	myLayout->number=nValue;
-	myLayout->extension=tValue;
-	myLayout->outputFileName=oValue;
+	myCollage->num_images = nValue;
+	myCollage->extension = tValue;
+	myCollage->outputFileName = oValue;
 	
 	return 0;
 }
 
 
-void printSummary(struct layout* myLayout){
+void printSummary(struct collage_t* myCollage){
 	
 	printf("Summary\n");
-	printf("\tNumero di foto da stampare:\t%i\n", myLayout->number);
-	printf("\tNome del file finale:\t%s.%s\n", myLayout->outputFileName, myLayout->extension);
+	printf("\tNumero di foto da stampare:\t%i\n", myCollage->num_images);
+	printf("\tNome del file finale:\t%s.%s\n", myCollage->outputFileName, myCollage->extension);
 
 	int i;
-	for (i= 0; i < myLayout->number; i++){
+	for (i= 0; i < myCollage->num_images; i++){
 		printf("i %i\n",i);
-		char* out=malloc( strlen(myLayout->outputFileName) + strlen(myLayout->extension)+2);
-		out= strcpy(out, (*myLayout).outputFileName);
+		char* out=malloc( strlen(myCollage->outputFileName) + strlen(myCollage->extension)+2);
+		out= strcpy(out, myCollage->outputFileName);
 		out = strcat(out,".") ;
-		out = strcat(out, (*myLayout).extension);
+		out = strcat(out, myCollage->extension);
 
 		//vips_image_write_to_file ((myLayout->arrayOfImages[i]).image, out, NULL);
 	}
@@ -178,7 +183,7 @@ void printSummary(struct layout* myLayout){
 
 
 
-int setLayout ( struct layout* myLayout, int size)
+int setLayout ( struct layout_t* myLayout, int size)
 {
 	return 1;
 }

@@ -1,43 +1,28 @@
+#ifndef COLLAGEMAKER_H_
+#define COLLAGEMAKER_H_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "layout.h"
 /*include vips*/
 #include <vips/vips.h>
 
 
-
-#define MAX_NUM_FRAME 6
-#define MIN_NUM_FRAME 2
-
-#ifndef COLLAGEMAKER_H_
-#define COLLAGEMAKER_H_
-struct coord{
+struct colour{
 	int x;
 	int y;
+	int z;
 };
 
-struct colour{
-	int r;
-	int g;
-	int b;
-};
-
-struct collageMakerImage{
-	struct coord pos;
-	struct coord dim;
-	int rot;
-	VipsImage* image;
-};
-
-struct layout {
-	int number;
-	char* extension;
+struct collage_t {
+	int num_images;
 	char* outputFileName;
-	char layoutID;
-	struct coord layoutDim;
+	char* extension;
+	VipsImage** images;
 	struct colour backgroundColor;
-	struct collageMakerImage *arrayOfImages;
+	struct layout_t layout;
 };
 
 #endif
