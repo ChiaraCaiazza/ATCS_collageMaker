@@ -4,12 +4,14 @@
 #include <libconfig.h>
 
 
-struct frame_t* get_frames(int num_frame, int id_layout)
+int get_layout(struct layout_t* out, int num_frame, int id_layout)
 {
 	config_setting_t *category_list, *category, *layout_list, *layout, *frame_list, *frame;
 	config_t layout_config;
 	int frame_length, i;
-	struct frame_t *result = (struct frame_t*) malloc (num_frame * sizeof(struct frame_t));;
+	out->num_frames = num_frame;
+	out->perc_to_pixel = 0; // 
+	out->frames = (struct frame_t*) malloc (num_frame * sizeof(struct frame_t));
 
 	config_init(&layout_config);
 	config_read_file(&layout_config, "./layout.cfg");
@@ -25,16 +27,22 @@ struct frame_t* get_frames(int num_frame, int id_layout)
 	for(i = 0; i < frame_length; i++)
 	{
 		frame = config_setting_get_elem(frame_list, i);
-		config_setting_lookup_int(frame, "pos_x", &(result[i].pos_x));
-		config_setting_lookup_int(frame, "pos_y", &(result[i].pos_y));
-		config_setting_lookup_int(frame, "width", &(result[i].width));
-		config_setting_lookup_int(frame, "height", &(result[i].height));
-		config_setting_lookup_int(frame, "rot", &(result[i].rot));
+		config_setting_lookup_int(frame, "pos_x", &(out->frames[i].pos_x));
+		config_setting_lookup_int(frame, "pos_y", &(out->frames[i].pos_y));
+		config_setting_lookup_int(frame, "width", &(out->frames[i].width));
+		config_setting_lookup_int(frame, "height", &(out->frames[i].height));
+		config_setting_lookup_int(frame, "rot", &(out->frames[i].rot));
 	}
 
 	
 	config_destroy(&layout_config);
-	return result;
+	return 0;
+}
+
+void destroy_layout(struct layout_t* layout)
+{
+	free(layout->frames);
+	free(layout);
 }
 
 int get_num_layouts(int num_frame)
@@ -56,12 +64,9 @@ int get_num_layouts(int num_frame)
 	return num_layouts;
 }
 
-void destroy_frames(struct frame_t *list)
-{
-	free(list);
-}
 
-void print_layout(int num_frame)
+
+void print_layouts(int num_frame)
 {
 	
 	config_setting_t *category_list, *category, *layout_list, *layout;
@@ -88,12 +93,12 @@ void print_layout(int num_frame)
 	config_destroy(&layout_config);
 }
 
-double* frame_width_over_height(struct frame_t *list, int num_elem){
+double* frame_width_over_height(struct layout_t* layout){
 	int i;
-	double* ret = (double*) malloc (sizeof(double) * num_elem);
-	for (i=0; i<num_elem; i++)
+	double* ret = (double*) malloc (sizeof(double) * layout->num_frames);
+	for (i=0; i< layout->num_frames; i++)
 	{
-		ret[i] = (double)(list[i].width) / (double)(list[i].height);
+		ret[i] = (double)(layout->frames[i].width) / (double)(layout->frames[i].height);
 	}
 	return ret;
 }

@@ -21,12 +21,12 @@ get_vert_resol(const VipsImage *image) {
 }
 
 int
-min_resol(struct collageMakerImage *list, int num_elem){
+min_resol(VipsImage **img_array, int num_elem){
 	int i, i_app = 0;
-	double min = get_horiz_resol(list[0].image)*get_vert_resol(list[0].image);
+	double min = get_horiz_resol(img_array[0])*get_vert_resol(img_array[0]);
 	for (i=1; i<num_elem; i++) {
-		if (get_horiz_resol(list[i].image)*get_vert_resol(list[i].image) < min){
-			min = get_horiz_resol(list[i].image)*get_vert_resol(list[i].image);
+		if (get_horiz_resol(img_array[i])*get_vert_resol(img_array[i]) < min){
+			min = get_horiz_resol(img_array[i])*get_vert_resol(img_array[i]);
 			i_app = i;
 		}
 	}
@@ -34,12 +34,12 @@ min_resol(struct collageMakerImage *list, int num_elem){
 }
 
 int 
-min_height(struct collageMakerImage *list, int num_elem){
+min_height(VipsImage **img_array, int num_elem){
 	int i, i_app = 0;
-	int min = get_height(list[0].image);
+	int min = get_height(img_array[0]);
 	for (i=1; i<num_elem; i++){
-		if (get_height(list[i].image) < min){
-			min = get_height(list[i].image);
+		if (get_height(img_array[i]) < min){
+			min = get_height(img_array[i]);
 			i_app = i;
 		}
 	}
@@ -47,12 +47,12 @@ min_height(struct collageMakerImage *list, int num_elem){
 }
 
 int 
-min_width(struct collageMakerImage *list, int num_elem){
+min_width(VipsImage **img_array, int num_elem){
 	int i, i_app = 0;
-	int min = get_width(list[0].image);
+	int min = get_width(img_array[0]);
 	for (i=1; i<num_elem; i++){
-		if (get_width(list[i].image) < min){
-			min = get_width(list[i].image);
+		if (get_width(img_array[i]) < min){
+			min = get_width(img_array[i]);
 			i_app = i;
 		}
 	}
@@ -60,11 +60,11 @@ min_width(struct collageMakerImage *list, int num_elem){
 }
 
 double*
-im_width_over_height(struct collageMakerImage *list, int num_elem){
+image_width_over_height(VipsImage **img_array, int num_elem){
 	int i;
 	double* ret = (double*)malloc(sizeof(double)*num_elem);
 	for (i=0; i<num_elem; i++)
-		ret[i] = (double)get_width(list[i].image) / (double)get_height(list[i].image);
+		ret[i] = (double)get_width(img_array[i]) / (double)get_height(img_array[i]);
 	return ret;
 }
 	

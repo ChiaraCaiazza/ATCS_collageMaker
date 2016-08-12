@@ -1,5 +1,10 @@
+#ifndef LAYOUT_H_
+#define LAYOUT_H_
+
 #include <libconfig.h>
-#include "collageMaker.h"
+
+#define MAX_NUM_FRAME 6
+#define MIN_NUM_FRAME 2
 
 struct frame_t
 {
@@ -10,8 +15,16 @@ struct frame_t
 	int rot;				//rotation angle
 };
 
-struct frame_t* get_frames(int num_frame, int id_layout);
+struct layout_t {
+	int num_frames;
+	int perc_to_pixel;
+	struct frame_t* frames;
+};
+
+int get_layout(struct layout_t * out, int num_frame, int id_layout);
+void destroy_layout(struct layout_t * layout);
 int get_num_layouts(int num_frame);
-void destroy_frames(struct frame_t * list);
-void print_layout(int num_frame);
-double* frame_width_over_height(struct frame_t *list, int num_elem);
+void print_layouts(int num_frame);
+double* frame_width_over_height(struct layout_t* layout);
+
+#endif

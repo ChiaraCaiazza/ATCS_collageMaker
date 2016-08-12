@@ -24,7 +24,7 @@ exec:
 int main(int argc, char **argv) {
 	int ret;
 
-	struct layout myLayout;
+	struct collage_t myCollage;
 
 
 	if (vips_init (argv[0])){
@@ -34,21 +34,19 @@ int main(int argc, char **argv) {
 	else 
 		printf ("\nvips started...\t\e[34myes\e[0m\ncurrent version installed:\t\e[34m%s\n\n\e[0m", vips_version_string());
 
-	ret=scanInputValue (argc, argv, &myLayout, sizeof myLayout );
+	printf("\e[0;40m|  |\e[0;41m|  |\e[0;42m|  |\e[0;43m|  |\e[0;44m|  |\e[0;45m|  |\e[0;46m|  |\e[0;47m|  |\e[0m\n");
+	
+	ret=scanInputValue (argc, argv, &myCollage, sizeof myCollage );
 	if (ret<0)
 		return -1;
 
 	
-	ret = retrieveInput(&myLayout, sizeof myLayout);
+	ret = retrieveInput(&myCollage, sizeof myCollage);
 	if (ret<0)
 		return -1;
 
-	printf("After retrieve input");
-	printSummary(&myLayout);
+	printSummary(&myCollage);
 
-	
-	struct frame_t *frames = get_frames(2, 1);
-	destroy_frames(frames);
 
 	vips_shutdown();
 
