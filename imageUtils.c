@@ -1,4 +1,15 @@
-#include "imageInfo.h"
+#include "imageUtils.h"
+
+int 
+RGB2XYZ(int r, int g, int b, float* x, float* y, float* z){
+	int ret;
+	float rr, gg, bb;
+	ret = vips_col_sRGB2scRGB_8(r, g, b, &rr, &gg, &bb);
+	if (ret<0)
+		return ret;
+	ret = vips_col_scRGB2XYZ(rr, gg, bb, x, y, z);
+	return ret;
+}
 
 int 
 get_width(const VipsImage *image) {
