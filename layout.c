@@ -3,6 +3,50 @@
 #include <stdio.h>
 #include <libconfig.h>
 
+double get_frame_posX(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].pos_x;
+	}
+	return -1;
+}
+
+double get_frame_posY(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].pos_y;
+	}
+	return -1;
+}
+
+double get_frame_width(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].width;
+	}
+	return -1;
+}
+
+double get_frame_height(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].height;
+	}
+	return -1;
+}
+
+double get_frame_rot(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].rot;
+	}
+	return -1;
+}
 
 int get_layout(struct layout_t* out, int num_frame, int id_layout)
 {
@@ -27,11 +71,11 @@ int get_layout(struct layout_t* out, int num_frame, int id_layout)
 	for(i = 0; i < frame_length; i++)
 	{
 		frame = config_setting_get_elem(frame_list, i);
-		config_setting_lookup_int(frame, "pos_x", &(out->frames[i].pos_x));
-		config_setting_lookup_int(frame, "pos_y", &(out->frames[i].pos_y));
-		config_setting_lookup_int(frame, "width", &(out->frames[i].width));
-		config_setting_lookup_int(frame, "height", &(out->frames[i].height));
-		config_setting_lookup_int(frame, "rot", &(out->frames[i].rot));
+		config_setting_lookup_double(frame, "pos_x", &(out->frames[i].pos_x));
+		config_setting_lookup_double(frame, "pos_y", &(out->frames[i].pos_y));
+		config_setting_lookup_double(frame, "width", &(out->frames[i].width));
+		config_setting_lookup_double(frame, "height", &(out->frames[i].height));
+		config_setting_lookup_double(frame, "rot", &(out->frames[i].rot));
 	}
 
 	

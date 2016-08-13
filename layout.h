@@ -8,11 +8,11 @@
 
 struct frame_t
 {
-	int pos_x;				//position of the left side of the frame
-	int pos_y;				//position of the upper side of the frame
-	int width;		
-	int height;
-	int rot;				//rotation angle
+	double pos_x;				//position of the left side of the frame
+	double pos_y;				//position of the upper side of the frame
+	double width;		
+	double height;
+	double rot;					//rotation angle
 };
 
 struct layout_t {
@@ -21,6 +21,11 @@ struct layout_t {
 	struct frame_t* frames;
 };
 
+double get_frame_posX(const struct layout_t* layout, int index);
+double get_frame_posY(const struct layout_t* layout, int index);
+double get_frame_width(const struct layout_t* layout, int index);
+double get_frame_height(const struct layout_t* layout, int index);
+double get_frame_rot(const struct layout_t* layout, int index);
 int get_layout(struct layout_t * out, int num_frame, int id_layout);
 void destroy_layout(struct layout_t * layout);
 int get_num_layouts(int num_frame);
