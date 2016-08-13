@@ -36,10 +36,16 @@ void create_collage(struct collage_t* myCollage)
 	
 	
 	//lo colora del colore scelto dall'utente
-	vips_colourspace(canvas, &canvas_col, VIPS_INTERPRETATION_XYZ, NULL);
+	VipsInterpretation try_interp;
+	try_interp = vips_image_guess_interpretation (canvas);
+	vips_colourspace(canvas, &canvas_col, VIPS_INTERPRETATION_sRGB, NULL);
+	/*
 	ink[0] = myCollage->backgroundColour.x;
 	ink[1] = myCollage->backgroundColour.y;
-	ink[2] = myCollage->backgroundColour.z;
+	ink[2] = myCollage->backgroundColour.z;*/
+	ink[0] = 255;
+	ink[1] = 255;
+	ink[2] = 255;
 	vips_draw_flood(canvas_col, ink, 3, 0, 0, NULL);	
 	
 	
@@ -53,10 +59,10 @@ void create_collage(struct collage_t* myCollage)
 		if(i != min_res)
 		{
 			//scalare foto
-			int scale_x = frame_width / get_width(myCollage->images[i]);
-			int scale_y = frame_height / get_height(myCollage->images[i]);
+			double scale_x = (double)frame_width / (double)get_width(myCollage->images[i]);
+			double scale_y = (double)frame_height / (double)get_height(myCollage->images[i]);
 			
-			int scale = (scale_x <= scale_y)? scale_x : scale_y;
+			double scale = (scale_x < scale_y)? scale_x : scale_y;
 			vips_resize(myCollage->images[i], &temp_image, scale,  NULL);
 			myCollage->images[i] = temp_image;
 		}
