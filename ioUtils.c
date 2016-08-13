@@ -6,58 +6,33 @@
 
 #include "ioUtils.h"
 #include "layout.h"
+#include "imageUtils.h"
 
 
 int setLayout ( struct layout_t*, int);
-int extractExtension (char* photoName);
+int extractExtension (char*);
+int chooseLayout(struct collage_t*, int);
+int chooseColor (struct collage_t*);
+void takeRGB (struct collage_t*);
 
-
-int retrieveInput(struct collage_t * myCollage, int size){
+int retrieveInput(struct collage_t* myCollage, int size){
 	int ret, i;
 	char photoName[50];
-	
 
 	printf ("\e[36;1m\nBenvenuto in collage maker\e[0m\n\n");
-	
 	printf("Premere un tasto per visualizzare i layout disponibili per %i foto\n", myCollage->num_images);
 	getchar();
 	
-	print_layouts(myCollage->num_images);
-	int num_layouts = get_num_layouts(myCollage->num_images);
-
 	printf ("\e[35mAttenzione!!\n\nBisogna finire di implementare ancora tutta la parte di raccolta proferenze dall'utente!!\e[0m\n\n");
 	
-	/*
-	ret= setLayout(myLayout, size);
-	if (ret<0){
-		printf("Error!");
+	ret=chooseLayout(myCollage, size);	
+	if (ret<0)
 		return -1;
-	}
-	*/
 
-	printf("\e[35m Chiedere quale layout ed il colore\e[0m\n\n");
-	
-	while(1)
-	{
-		printf("Scegli uno dei layout disponibili: \n");
-		char layout_id = tolower(getchar());
-		if(layout_id != '\n')
-		{
-			printf("Layout scelto: %c\n", layout_id);
-			int layout_index = layout_id - 'a';
-			if( layout_index < 0 || layout_index > num_layouts)
-			{
-				printf("ERROR! Type a letter between 'a' and '%c' \n", 'a' + num_layouts - 1);
-			}
-			else
-			{
-				get_layout(&(myCollage->layout), myCollage->num_images, layout_index);
-				break;
-			}
-		}
-	}
-	
-	
+	ret=chooseColor(myCollage);	
+	if (ret<0)
+		return -1;
+
 	myCollage->images = (VipsImage**)malloc(sizeof(VipsImage*) * myCollage->num_images);
 
 	i=0;
@@ -177,7 +152,7 @@ void printSummary(struct collage_t* myCollage){
 		out = strcat(out,".") ;
 		out = strcat(out, myCollage->extension);
 
-		//vips_image_write_to_file ((myLayout->arrayOfImages[i]).image, out, NULL);
+		vips_image_write_to_file (myCollage->images[i], out, NULL);
 	}
 }
 
@@ -248,4 +223,80 @@ int extractExtension (char* photoName){
 	return 0;
 }
 
+
+int chooseLayout(struct collage_t * myCollage, int size){
+	int num_layouts = get_num_layouts(myCollage->num_images);
+
+	print_layouts(myCollage->num_images);
+
+	while(1)
+	{
+		printf("Scegli uno dei layout disponibili: \n");
+		char layout_id = tolower(getchar());
+		if(layout_id != '\n')
+		{
+			printf("Layout scelto: %c\n", layout_id);
+			int layout_index = layout_id - 'a';
+			if( layout_index < 0 || layout_index > num_layouts)
+			{
+				printf("ERROR! Type a letter between 'a' and '%c' \n", 'a' + num_layouts - 1);
+			}
+			else
+			{
+				get_layout(&(myCollage->layout), myCollage->num_images, layout_index);
+				break;
+			}
+		}
+	}
+	return 0;
+}
+
+
+
+int chooseColor(struct collage_t * myCollage){
+	char colorID[3];
+	int ret;
+
+	while(1)
+	{
+		printf("Scegli uno tra i sequenti colori o premi p per inserire il tuo RGB (q per terminare)\n");
+		ret = printColor();
+		if (ret<0)
+			return -1;
+		
+		getchar();
+		scanf ("%s", colorID);
+		if (strcmp(colorID,"p") == 0){
+			printf("Inserire un RGB\n");
+			takeRGB(myCollage);
+			break;
+		}
+
+		if (strcmp(colorID,"q") == 0){
+			printf("\e[91m\nOperazione terminata\n\n\e[0m");
+			return -1;
+		}
+	}
+	return 0;
+}
+
+void takeRGB(struct collage_t * myCollage)
+{
+	int R,G,B;
+	float x, y, z;
+
+	printf ("R:\t");
+	scanf("%i", &R);
+	printf ("G:\t");
+	scanf("%i", &G);
+	printf ("B:\t");
+	scanf("%i", &B);
+
+	printf("\nHai inserito i seguenti RGB%i-%i-%i\n", R, G, B);
+	
+	RGB2XYZ(R, G, B, &x, &y, &z);
+	
+	printf("\nQuesti sono i tuoi valori XYZ%f-%f-%f\n", x, y, z);
+	
+}
 

@@ -3,6 +3,50 @@
 #include <stdio.h>
 #include <libconfig.h>
 
+double get_frame_posX(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].pos_x;
+	}
+	return -1;
+}
+
+double get_frame_posY(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].pos_y;
+	}
+	return -1;
+}
+
+double get_frame_width(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].width;
+	}
+	return -1;
+}
+
+double get_frame_height(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].height;
+	}
+	return -1;
+}
+
+double get_frame_rot(const struct layout_t* layout, int index)
+{
+	if(layout != NULL && layout->frames != NULL)
+	{
+		return layout->frames[index].rot;
+	}
+	return -1;
+}
 
 int get_layout(struct layout_t* out, int num_frame, int id_layout)
 {
@@ -27,11 +71,12 @@ int get_layout(struct layout_t* out, int num_frame, int id_layout)
 	for(i = 0; i < frame_length; i++)
 	{
 		frame = config_setting_get_elem(frame_list, i);
-		config_setting_lookup_int(frame, "pos_x", &(out->frames[i].pos_x));
-		config_setting_lookup_int(frame, "pos_y", &(out->frames[i].pos_y));
-		config_setting_lookup_int(frame, "width", &(out->frames[i].width));
-		config_setting_lookup_int(frame, "height", &(out->frames[i].height));
-		config_setting_lookup_int(frame, "rot", &(out->frames[i].rot));
+		if ( config_setting_lookup_float(frame, "pos.x", &(out->frames[i].pos_x))==CONFIG_FALSE)
+			printf("pos.x:\tONFIG_FALSE\n");
+		config_setting_lookup_float(frame, "pos.y", &(out->frames[i].pos_y));
+		config_setting_lookup_float(frame, "size.w", &(out->frames[i].width));
+		config_setting_lookup_float(frame, "size.h", &(out->frames[i].height));
+		config_setting_lookup_float(frame, "rot", &(out->frames[i].rot));
 	}
 
 	
@@ -91,6 +136,38 @@ void print_layouts(int num_frame)
 	}
 	
 	config_destroy(&layout_config);
+}
+
+
+int printColor()
+{
+	config_setting_t *colorList, *layout;
+	config_t layoutConfig;
+	int colorLength, i;
+	const char* colorValue;
+
+	config_init(&layoutConfig);
+	if (!config_read_file(&layoutConfig, "./layout.cfg")) {
+        	fprintf(stderr, "%s:%d - %s\n",
+           	config_error_file(&layoutConfig),
+            	config_error_line(&layoutConfig),
+            	config_error_text(&layoutConfig));
+        	config_destroy(&layoutConfig);
+        	return -1;
+    	}
+	
+	colorList = config_lookup(&layoutConfig, "application.colors");
+	colorLength = config_setting_length(colorList);
+	for(i = 0; i < colorLength; i++)
+	{
+		layout = config_setting_get_elem(colorList, i);
+		config_setting_lookup_string(layout, "name", &colorValue);
+		printf(" %i)\t", i);
+		printf("%s\n", colorValue);
+	}
+	
+	config_destroy(&layoutConfig);
+	return 0;
 }
 
 double* frame_width_over_height(struct layout_t* layout){
