@@ -296,6 +296,9 @@ void takeRGB(struct collage_t * myCollage)
 	
 	RGB2XYZ(R, G, B, &x, &y, &z);
 	
+	myCollage->backgroundColour.x = x;
+	myCollage->backgroundColour.y = y;
+	myCollage->backgroundColour.z = z;
 	printf("\nQuesti sono i tuoi valori XYZ%f-%f-%f\n", x, y, z);
 	
 }
