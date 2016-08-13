@@ -71,20 +71,26 @@ int get_layout(struct layout_t* out, int num_frame, int id_layout)
 	for(i = 0; i < frame_length; i++)
 	{
 		frame = config_setting_get_elem(frame_list, i);
-<<<<<<< HEAD
-		config_setting_lookup_double(frame, "pos_x", &(out->frames[i].pos_x));
-		config_setting_lookup_double(frame, "pos_y", &(out->frames[i].pos_y));
-		config_setting_lookup_double(frame, "width", &(out->frames[i].width));
-		config_setting_lookup_double(frame, "height", &(out->frames[i].height));
-		config_setting_lookup_double(frame, "rot", &(out->frames[i].rot));
-=======
-		if ( config_setting_lookup_float(frame, "pos.x", &(out->frames[i].pos_x))==CONFIG_FALSE)
+		pos= config_setting_get_member(frame, "pos");
+		size = config_setting_get_member(frame, "size");
+		if (config_setting_lookup_float(pos, "x", &(out->frames[i].pos_x))==CONFIG_FALSE)
 			printf("pos.x:\tONFIG_FALSE\n");
-		config_setting_lookup_float(frame, "pos.y", &(out->frames[i].pos_y));
-		config_setting_lookup_float(frame, "size.w", &(out->frames[i].width));
-		config_setting_lookup_float(frame, "size.h", &(out->frames[i].height));
-		config_setting_lookup_float(frame, "rot", &(out->frames[i].rot));
->>>>>>> refs/remotes/origin/chiara
+		else printf("pos.x:\tok!\n");
+
+		if ( config_setting_lookup_float(pos, "y", &(out->frames[i].pos_y))==CONFIG_FALSE)
+			printf("pos.y:\tONFIG_FALSE\n");
+		else printf("pos.y:\tok!\n");
+		
+		if ( config_setting_lookup_float(size, "w", &(out->frames[i].width))==CONFIG_FALSE)
+			printf("size.w:\tONFIG_FALSE\n");
+		else printf("size.w:\tok!\n");
+
+		if ( config_setting_lookup_float(size, "h", &(out->frames[i].height))==CONFIG_FALSE)
+			printf("size.h:\tONFIG_FALSE\n");
+		else printf("size.h:\tok!\n");
+
+		
+		//config_setting_lookup_float(frame, "rot", &(out->frames[i].rot));
 	}
 
 	
