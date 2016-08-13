@@ -77,15 +77,15 @@ int get_layout(struct layout_t* out, int num_frame, int id_layout)
 			printf("pos.x:\tONFIG_FALSE\n");
 		else printf("pos.x:\tok!\n");
 
-if ( config_setting_lookup_float(pos, "y", &(out->frames[i].pos_y))==CONFIG_FALSE)
+		if ( config_setting_lookup_float(pos, "y", &(out->frames[i].pos_y))==CONFIG_FALSE)
 			printf("pos.y:\tONFIG_FALSE\n");
 		else printf("pos.y:\tok!\n");
 		
-if ( config_setting_lookup_float(size, "w", &(out->frames[i].width))==CONFIG_FALSE)
+		if ( config_setting_lookup_float(size, "w", &(out->frames[i].width))==CONFIG_FALSE)
 			printf("size.w:\tONFIG_FALSE\n");
 		else printf("size.w:\tok!\n");
 
-if ( config_setting_lookup_float(size, "h", &(out->frames[i].height))==CONFIG_FALSE)
+		if ( config_setting_lookup_float(size, "h", &(out->frames[i].height))==CONFIG_FALSE)
 			printf("size.h:\tONFIG_FALSE\n");
 		else printf("size.h:\tok!\n");
 
