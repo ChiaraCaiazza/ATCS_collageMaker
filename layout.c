@@ -71,11 +71,20 @@ int get_layout(struct layout_t* out, int num_frame, int id_layout)
 	for(i = 0; i < frame_length; i++)
 	{
 		frame = config_setting_get_elem(frame_list, i);
+<<<<<<< HEAD
 		config_setting_lookup_double(frame, "pos_x", &(out->frames[i].pos_x));
 		config_setting_lookup_double(frame, "pos_y", &(out->frames[i].pos_y));
 		config_setting_lookup_double(frame, "width", &(out->frames[i].width));
 		config_setting_lookup_double(frame, "height", &(out->frames[i].height));
 		config_setting_lookup_double(frame, "rot", &(out->frames[i].rot));
+=======
+		if ( config_setting_lookup_float(frame, "pos.x", &(out->frames[i].pos_x))==CONFIG_FALSE)
+			printf("pos.x:\tONFIG_FALSE\n");
+		config_setting_lookup_float(frame, "pos.y", &(out->frames[i].pos_y));
+		config_setting_lookup_float(frame, "size.w", &(out->frames[i].width));
+		config_setting_lookup_float(frame, "size.h", &(out->frames[i].height));
+		config_setting_lookup_float(frame, "rot", &(out->frames[i].rot));
+>>>>>>> refs/remotes/origin/chiara
 	}
 
 	
@@ -135,6 +144,38 @@ void print_layouts(int num_frame)
 	}
 	
 	config_destroy(&layout_config);
+}
+
+
+int printColor()
+{
+	config_setting_t *colorList, *layout;
+	config_t layoutConfig;
+	int colorLength, i;
+	const char* colorValue;
+
+	config_init(&layoutConfig);
+	if (!config_read_file(&layoutConfig, "./layout.cfg")) {
+        	fprintf(stderr, "%s:%d - %s\n",
+           	config_error_file(&layoutConfig),
+            	config_error_line(&layoutConfig),
+            	config_error_text(&layoutConfig));
+        	config_destroy(&layoutConfig);
+        	return -1;
+    	}
+	
+	colorList = config_lookup(&layoutConfig, "application.colors");
+	colorLength = config_setting_length(colorList);
+	for(i = 0; i < colorLength; i++)
+	{
+		layout = config_setting_get_elem(colorList, i);
+		config_setting_lookup_string(layout, "name", &colorValue);
+		printf(" %i)\t", i);
+		printf("%s\n", colorValue);
+	}
+	
+	config_destroy(&layoutConfig);
+	return 0;
 }
 
 double* frame_width_over_height(struct layout_t* layout){
