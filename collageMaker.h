@@ -11,17 +11,17 @@
 
 
 struct colour{
-	int x;
-	int y;
-	int z;
+	double x;
+	double y;
+	double z;
 };
 
 struct collage_t {
-	int num_images;
 	char* outputFileName;
 	char* extension;
+	int num_images;
 	VipsImage** images;
-	struct colour backgroundColor;
+	struct colour backgroundColour;
 	struct layout_t layout;
 };
 
