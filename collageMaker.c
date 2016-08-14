@@ -18,18 +18,18 @@ void create_collage(struct collage_t* myCollage)
 	frames_WHratio = frame_width_over_height(&myCollage->layout);
 	photo2frame = find_best_match(images_WHratio, frames_WHratio, myCollage->num_images);
 	
-	//larghezza foto / (larghezza % frame)
+	//photo width / (% width frame)
 	canvasWidth = (int) (get_width(myCollage->images[min_res]) / 
 							get_frame_width(&myCollage->layout, photo2frame[min_res]));
-	//altezza foto / (altezza % frame)
+	//photo height / (% height frame)
 	canvasHeight = (int) (get_height(myCollage->images[min_res]) / 
 							get_frame_height(&myCollage->layout, photo2frame[min_res]));
 	
 	
-	//crea il canvas nero
+	//create black canvas
 	vips_black (&canvas, canvasWidth, canvasHeight, NULL);
 	
-	//lo colora del colore scelto dall'utente
+	//paint the canvas with the colour chosen by the user
 	VipsInterpretation try_interp;
 	try_interp = vips_image_guess_interpretation (canvas);
 	vips_colourspace(canvas, &canvas_col, VIPS_INTERPRETATION_sRGB, NULL);
@@ -46,7 +46,7 @@ void create_collage(struct collage_t* myCollage)
 		int frame_height = get_frame_height(&myCollage->layout, frame_i) * canvasHeight;
 		if(i != min_res)
 		{
-			//scalare foto
+			//scale the photo
 			double scale_x = (double)frame_width / (double)get_width(myCollage->images[i]);
 			double scale_y = (double)frame_height / (double)get_height(myCollage->images[i]);
 			
@@ -57,13 +57,13 @@ void create_collage(struct collage_t* myCollage)
 		
 		protect_image_from_flood(myCollage->images[i]);
 		
-		//la posizione orizzontale del frame è data dalla posizione orizz. percentuale 
-		//moltiplicata per il coefficiente di conversione
+		/* the horizontal/vertical position of the frame is given by the horizontal/vertical position 
+		(%) times the conversion coefficient*/
 		int frame_posX = get_frame_posX(&myCollage->layout, frame_i) * canvasWidth;
 		int frame_posY = get_frame_posY(&myCollage->layout, frame_i) * canvasHeight;
 		
-		//la posizione dell'immagine è quella del frame spostata di metà della differenza tra 
-		//la larghezza/lunghezza del frame e quella della foto (la differenza può essere nulla)
+		/* the image position is the frame position shifted by half of the difference between the 
+		width/height of the frame and width/height of the photo (difference may be 0)*/
 		int image_posX = frame_posX + ( frame_width - get_width(myCollage->images[i]) )/2;
 		int image_posY = frame_posY + ( frame_height - get_height(myCollage->images[i]) )/2;
 		
@@ -93,11 +93,11 @@ int main(int argc, char **argv) {
 
 
 	if (vips_init (argv[0])){
-    		vips_error_exit ("unable to start VIPS");
+    		vips_error_exit ("Unable to start VIPS");
 		return -1;
 	}
 	else 
-		printf ("\nvips started...\t\e[34myes\e[0m\ncurrent version installed:\t\e[34m%s\n\n\e[0m", vips_version_string());
+		printf ("\nVips started...\t\e[34myes\e[0m\ncurrent version installed:\t\e[34m%s\n\n\e[0m", vips_version_string());
 
 	
 	ret=scanInputValue (argc, argv, &myCollage, sizeof myCollage );
