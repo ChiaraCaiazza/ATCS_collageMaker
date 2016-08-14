@@ -64,6 +64,8 @@ void create_collage(struct collage_t* myCollage)
 			myCollage->images[i] = temp_image;
 		}
 		
+		vips_draw_rect(myCollage->images[i], ink, 3, 0, 0, get_width(myCollage->images[i]), get_height(myCollage->images[i]), NULL);
+		
 		//la posizione orizzontale del frame è data dalla posizione orizz. percentuale 
 		//moltiplicata per il coefficiente di conversione
 		int frame_posX = get_frame_posX(&myCollage->layout, frame_i) * canvasWidth;
@@ -89,10 +91,6 @@ void create_collage(struct collage_t* myCollage)
 		}
 		
 		vips_draw_image(canvas_col, myCollage->images[i], image_posX, image_posY, NULL);
-		
-		//vips_copy (prova, &out_image_temp, NULL);
-		//vips_insert (out_image_temp ,myCollage->images[i], &prova, image_posX, image_posY, "expand", TRUE,  NULL);
-		
 				
 	}
 	
@@ -118,7 +116,6 @@ int main(int argc, char **argv) {
 	else 
 		printf ("\nvips started...\t\e[34myes\e[0m\ncurrent version installed:\t\e[34m%s\n\n\e[0m", vips_version_string());
 
-	//printf("\e[0;40m|  |\e[0;41m|  |\e[0;42m|  |\e[0;43m|  |\e[0;44m|  |\e[0;45m|  |\e[0;46m|  |\e[0;47m|  |\e[0m\n");
 	
 	ret=scanInputValue (argc, argv, &myCollage, sizeof myCollage );
 	if (ret<0)
