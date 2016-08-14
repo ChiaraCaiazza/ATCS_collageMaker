@@ -1,7 +1,7 @@
 #include "imageUtils.h"
 #include <math.h>
 
-int 
+/*int 
 RGB2XYZ(int r, int g, int b, float* x, float* y, float* z){
 	int ret;
 	float rr, gg, bb;
@@ -10,30 +10,25 @@ RGB2XYZ(int r, int g, int b, float* x, float* y, float* z){
 		return ret;
 	ret = vips_col_scRGB2XYZ(rr, gg, bb, x, y, z);
 	return ret;
-}
+}*/
 
-int 
-get_width(const VipsImage *image) {
+int get_width(const VipsImage *image) {
 	return vips_image_get_width(image);
 }
 
-int
-get_height(const VipsImage *image) {
+int get_height(const VipsImage *image) {
 	return vips_image_get_height(image);
 }
 
-double
-get_horiz_resol(const VipsImage *image) {
+double get_horiz_resol(const VipsImage *image) {
 	return vips_image_get_xres(image);
 }
 
-double 
-get_vert_resol(const VipsImage *image) {
+double get_vert_resol(const VipsImage *image) {
 	return vips_image_get_yres(image);
 }
 
-int
-min_resol(VipsImage **img_array, int num_elem){
+int min_resol(VipsImage **img_array, int num_elem){
 	int i, i_app = 0;
 	double min = get_horiz_resol(img_array[0])*get_vert_resol(img_array[0]);
 	for (i=1; i<num_elem; i++) {
@@ -45,8 +40,7 @@ min_resol(VipsImage **img_array, int num_elem){
 	return i_app;
 }
 
-int 
-min_height(VipsImage **img_array, int num_elem){
+int min_height(VipsImage **img_array, int num_elem){
 	int i, i_app = 0;
 	int min = get_height(img_array[0]);
 	for (i=1; i<num_elem; i++){
@@ -58,8 +52,7 @@ min_height(VipsImage **img_array, int num_elem){
 	return i_app;
 }
 
-int 
-min_width(VipsImage **img_array, int num_elem){
+int min_width(VipsImage **img_array, int num_elem){
 	int i, i_app = 0;
 	int min = get_width(img_array[0]);
 	for (i=1; i<num_elem; i++){
@@ -71,8 +64,7 @@ min_width(VipsImage **img_array, int num_elem){
 	return i_app;
 }
 
-double*
-image_width_over_height(VipsImage **img_array, int num_elem){
+double* image_width_over_height(VipsImage **img_array, int num_elem){
 	int i;
 	double* ret = (double*)malloc(sizeof(double)*num_elem);
 	for (i=0; i<num_elem; i++)
@@ -80,8 +72,7 @@ image_width_over_height(VipsImage **img_array, int num_elem){
 	return ret;
 }
 	
-int*
-find_best_match(double* images_ratio, double* frames_ratio, int num_elem){
+int* find_best_match(double* images_ratio, double* frames_ratio, int num_elem){
 	int i, j;
 	int remaining = num_elem;
 	int image_index, frame_index;

@@ -34,10 +34,9 @@ They function returns the best match between images and frames in the form of an
 index is the image index and the value is the frame index associated to the image. */
 int* find_best_match(double* images_ratio, double* frames_ratio, int num_elem);
 
-//the function inserts a border (1pixel) around the image to prevent that 
-//the flood operation continues inside the image (expecially for black-based images)
+/*The function inserts a border (1pixel) around the image to avoid that the flood operation 
+continues inside the image (expecially for black-based images)*/
 void protect_image_from_flood(VipsImage* image);
 
-//the function rotates the image
-//rotation is in degree and clockwise
+//The function rotates the image (rotation is in degrees and clockwise)
 void rotate_image(VipsImage** image, double rotation);
