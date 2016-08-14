@@ -20,7 +20,7 @@ void takeSingleValue(int*);
 int retrieveInput(struct collage_t* myCollage, int size){
 	int ret;
 
-	printf ("\e[36;1m\nBenvenuto in collage maker\e[0m\n\nPremere un tasto per visualizzare i layout disponibili per %i foto\n", myCollage->num_images);
+	printf ("\e[36;1m\nWelcome in collage maker\e[0m\n\nPress a key to see the available layouts for %i photos\n", myCollage->num_images);
 	getchar();
 	
 	ret=chooseLayout(myCollage, size);	
@@ -31,7 +31,7 @@ int retrieveInput(struct collage_t* myCollage, int size){
 	if (ret<0)
 		return -1;
 
-	printf("\nQuesti sono i tuoi valori RGB:\t%i-%i-%i\n", myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
+	printf("\nThis are your RGB values:\t%i-%i-%i\n", myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
 
 	myCollage->images = (VipsImage**)malloc(sizeof(VipsImage*) * myCollage->num_images);
 
@@ -59,12 +59,12 @@ int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int coll
 				nValue = atoi(optarg);
 				
 				if (nValue>MAX_NUM_FRAME){
-					printf("Non e' possibile inserire piu' di 6 foto\n\n");
+					printf("You can't add more than 6 photos\n\n");
 					return -1;
 				}
 				else
 					if ((nValue<MIN_NUM_FRAME) & (nValue!=0)){
-						printf("Non e' possibile inserire meno di 2 foto\n\n");
+						printf("You can't add less than 2 photos\n\n");
 						return -1;
 					}
 
@@ -72,7 +72,7 @@ int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int coll
 			case 't':
 				tValue = optarg;
 				if ((strcmp(tValue,"png")!=0) && (strcmp(tValue,"jpg")!=0)){
-					printf("\e[36m%s\e[0m non e' un nome valido per l'estensione della foto prodotta.\nUseremo l'estensione di default \e[36m\"png\"\e[0m\n", tValue);
+					printf("\e[36m%s\e[0m is not a valid photo extension.\nThe default one will be used \e[36m\"png\"\e[0m\n", tValue);
 					tValue="png";
 				}
 				break;
@@ -80,32 +80,34 @@ int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int coll
 				oValue = optarg;
 				break;
 			case '?':
-				printf("\nFormato comando:\e[36m ./collageMaker  [-n num] [-t extension] [-o output]\e[0m\n");
+				printf("\nUsage:\e[36m ./collageMaker  [-n num_photos] [-t extension] [-o output]\e[0m\n");
 				return -1;
 			default:
 				return -1;
   		}
 
 	c=0;
-//controlliamo di aver messo tutti i parametri
+	
+	//check if all parameters have been set
 	if (nValue==0){
-		printf("Non e' stato inserito un numero di foto valido.\nUseremo il valore di default n=\e[36m2\e[0m\n");
+		printf("You haven't chosen a valid number of photos.\nThe default value n=\e[36m2\e[0m will be used.\n");
 		nValue=2;
 		c=1;
 	}
 	if (tValue==NULL){
-		printf("Non e' stato inserito un nome valido per l'estensione della foto prodotta.\nUseremo l'estensione di default \e[36m\"png\"\e[0m\n");
+		printf("You haven't chosen a valid photo extension for the output.\nThe default extension \e[36m\"png\"\e[0m will be used.\n");
 		tValue="png";
 		c=1;
 	}
 	if (oValue==NULL){
-		printf("Non e' stato inserito un nome valido per la foto prodotta.\nUseremo il nome di default \e[36m\"collageMakerOutput\"\e[0m\n");
+		printf("You haven't chosen a valid name for the output.\nThe default name \e[36m\"collageMakerOutput\"\e[0m will be used.\n");
 		oValue="collageMakerOutput";
 		c=1;
 	}
-//se un parametro manca, stampiamo il formato corretto
+
+	//if a parameter is missing, print the correct format of the command
 	if (c==1)
-		printf("\nFormato comando:\e[36m ./collageMaker  [-n num] [-t extension] [-o output]\e[0m\n");
+		printf("\nUsage:\e[36m ./collageMaker  [-n num_photos] [-t extension] [-o output]\e[0m\n");
 
 	myCollage->num_images = nValue;
 	myCollage->extension = tValue;
@@ -116,12 +118,11 @@ int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int coll
 
 
 void printSummary(struct collage_t* myCollage){
-	printf("Summary\n");
-	printf("\tNumero di foto da stampare:\t%i\n", myCollage->num_images);
-	printf("\tNome del file finale:\t%s.%s\n", myCollage->outputFileName, myCollage->extension);
-	printf("\tRGB:\t%i-%i-%i\n",myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
+	printf("SUMMARY\n");
+	printf("\tNumber of photos to use:\t%i\n", myCollage->num_images);
+	printf("\tName of the output file:\t%s.%s\n", myCollage->outputFileName, myCollage->extension);
+	printf("\tRGB of the background:\t\t%i-%i-%i\n",myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
 }
-
 
 
 int extractExtension (char* photoName){
@@ -131,12 +132,12 @@ int extractExtension (char* photoName){
   	extension = strrchr (photoName, '.');
 
 	if (extension == NULL){
-		printf("\e[91m\nErrore: questo file non ha alcuna estensione.\n\n\e[0m");
+		printf("\e[91m\nError: this file doesn't have any extension.\n\n\e[0m");
 		return -1;
 	}
 	if ((strcmp(extension,".png")!=0) && (strcmp(extension,".jpeg")!=0) &&
 	    (strcmp(extension,".jpg")!=0) && (strcmp(extension,".gif")!=0)){
-		printf("\e[91m\nEstensione file non valida. sono ammesse solo foto in formato PNG, GIF e JPEG.\n\n\e[0m");
+		printf("\e[91m\nThe file extension is not a valid one. Only PNG, GIF and JPEG formats are admitted.\n\n\e[0m");
 		return -1;
 	}
 
@@ -151,11 +152,11 @@ int chooseLayout(struct collage_t * myCollage, int size){
 
 	while(1)
 	{
-		printf("Scegli uno dei layout disponibili: \n");
+		printf("Choose one of the following layouts: \n");
 		char layout_id = tolower(getchar());
 		if(layout_id != '\n')
 		{
-			printf("Layout scelto: %c\n", layout_id);
+			printf("Choosen layout: %c\n", layout_id);
 			int layout_index = layout_id - 'a';
 			if( layout_index < 0 || layout_index > num_layouts)
 			{
@@ -178,23 +179,22 @@ int chooseColor(struct collage_t * myCollage){
 	int colID;
 	int *RGBArray=NULL;
 
-	//RGBArray=malloc((sizeof (int)*3*9)+1);
 	while(1)
 	{
-		printf("Scegli uno tra i sequenti colori o premi p per inserire il tuo RGB (q per terminare)\n");
+		printf("Choose one of the following colors or press \'p\' to choose the RGB values [q to exit]\n");
 		RGBArray = printColor();
 		if (RGBArray==NULL)
 			return -1;
 		
 		scanf ("%s", colorID);
 		if (strcmp(colorID,"p") == 0){
-			printf("Inserire un RGB\n");
+			printf("Choose the RGB values\n");
 			takeRGB(myCollage);
 			break;
 		}
 
 		if (strcmp(colorID,"q") == 0){
-			printf("\e[91m\nOperazione terminata\n\n\e[0m");
+			printf("\e[91m\nExiting...\n\n\e[0m");
 			return -1;
 		}
 		
@@ -222,7 +222,7 @@ void takeRGB(struct collage_t * myCollage)
 	printf ("B:\t");
 	takeSingleValue(&B);
 
-	printf("\nHai inserito i seguenti RGB%i-%i-%i\n", R, G, B);
+	printf("\nYou choose the following RGB values: %i-%i-%i\n", R, G, B);
 
 	myCollage->backgroundColour.r=R;
 	myCollage->backgroundColour.g=G;
@@ -237,7 +237,7 @@ void takeSingleValue(int* value){
 		printf("\n");
 		
 		if ((*value<0)||(*value>255)){
-			printf("Inserire un valore tra 0 e 255\n");
+			printf("Choose a value between 0 and 255\n");
 		}
 		else 
 			break;
@@ -251,11 +251,11 @@ int chooseFiles(struct collage_t* myCollage){
 	
 	i=0;
 	while(i != myCollage->num_images){
-		printf("Inserire il nome della foto [q per terminare]\n");
+		printf("Choose the name of the input photos to be used [q to exit]\n");
 		scanf ("%s", photoName);
 		printf("\n");
 		if (strcmp(photoName,"q") == 0){
-			printf("\e[91m\nOperazione annullata\n\n\e[0m");
+			printf("\e[91m\nExiting...\n\n\e[0m");
 			return -1;
 		}
 		
@@ -264,7 +264,7 @@ int chooseFiles(struct collage_t* myCollage){
 			continue;
 		
 		if(stat(photoName,&fileStat) < 0) {
-   			printf("\e[91m\nErrore: file inesistente.\n\n\e[0m");
+   			printf("\e[91m\nError: the file doesn't exist.\n\n\e[0m");
         		continue;
 		}
  		
