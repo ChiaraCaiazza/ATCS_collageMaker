@@ -115,6 +115,7 @@ int main(int argc, char **argv) {
 	}
 	else 
 		printf ("\nvips started...\t\e[34myes\e[0m\ncurrent version installed:\t\e[34m%s\n\n\e[0m", vips_version_string());
+
 	
 	ret=scanInputValue (argc, argv, &myCollage, sizeof myCollage );
 	if (ret<0)
@@ -132,6 +133,6 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
- //inputImages/immaginePNG.png
+ //test/JPEG_1.jpg   
 
 
