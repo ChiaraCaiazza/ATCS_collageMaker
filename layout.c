@@ -50,7 +50,9 @@ double get_frame_rot(const struct layout_t* layout, int index)
 
 int get_layout(struct layout_t* out, int num_frame, int id_layout)
 {
-	config_setting_t *category_list, *category, *layout_list, *layout, *frame_list,  *frame, *pos, *size;
+	config_setting_t *category_list, *category, *layout_list, *layout, *frame_list, *frame;
+	config_setting_t *pos, *size;
+
 	config_t layout_config;
 	int frame_length, i;
 	out->num_frames = num_frame;
