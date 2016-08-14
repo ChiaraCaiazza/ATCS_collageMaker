@@ -1,5 +1,4 @@
 /*include our header files*/
-#include <math.h>
 #include "collageMaker.h"
 #include "ioUtils.h"
 #include "layout.h"
@@ -26,14 +25,9 @@ void create_collage(struct collage_t* myCollage)
 	canvasHeight = (int) (get_height(myCollage->images[min_res]) / 
 							get_frame_height(&myCollage->layout, photo2frame[min_res]));
 	
-	printf("canvasWidth: %d, canvasHeight: %d\n", canvasWidth, canvasHeight);
-	printf("fotoWidth: %d, fotoHeight: %d\n", get_width(myCollage->images[min_res]), get_height(myCollage->images[min_res]));
-	printf("frameWidth: %f, frameHeight: %f\n", get_frame_width(&myCollage->layout, photo2frame[min_res]), get_frame_height(&myCollage->layout, photo2frame[min_res]));
 	
 	//crea il canvas nero
 	vips_black (&canvas, canvasWidth, canvasHeight, NULL);
-	//vips_xyz (&canvas, canvasWidth, canvasHeight, NULL);
-	
 	
 	//lo colora del colore scelto dall'utente
 	VipsInterpretation try_interp;
@@ -42,9 +36,6 @@ void create_collage(struct collage_t* myCollage)
 	ink[0] = myCollage->backgroundColour.r;
 	ink[1] = myCollage->backgroundColour.g;
 	ink[2] = myCollage->backgroundColour.b;
-
-	vips_draw_flood(canvas_col, ink, 3, 0, 0, NULL);	
-	
 	
 	
 	for(i = 0; i < myCollage->num_images; i++)
@@ -64,6 +55,8 @@ void create_collage(struct collage_t* myCollage)
 			myCollage->images[i] = temp_image;
 		}
 		
+		protect_image_from_flood(myCollage->images[i]);
+		
 		//la posizione orizzontale del frame è data dalla posizione orizz. percentuale 
 		//moltiplicata per il coefficiente di conversione
 		int frame_posX = get_frame_posX(&myCollage->layout, frame_i) * canvasWidth;
@@ -77,24 +70,14 @@ void create_collage(struct collage_t* myCollage)
 		double frame_rot = get_frame_rot(&myCollage->layout, frame_i);
 		if( frame_rot != 0)
 		{
-			double frame_rot_rad = frame_rot / (180.0 / M_PI);
-			double aa, bb, cc, dd;
-			aa = cos(frame_rot_rad);
-			bb = -sin(frame_rot_rad);
-			cc = sin(frame_rot_rad);
-			dd = cos(frame_rot_rad);
-			
-			vips_affine (myCollage->images[i], &temp_image,aa, bb, cc, dd, NULL);
-			myCollage->images[i] = temp_image;
+			rotate_image(&(myCollage->images[i]), frame_rot);
 		}
 		
 		vips_draw_image(canvas_col, myCollage->images[i], image_posX, image_posY, NULL);
-		
-		//vips_copy (prova, &out_image_temp, NULL);
-		//vips_insert (out_image_temp ,myCollage->images[i], &prova, image_posX, image_posY, "expand", TRUE,  NULL);
-		
 				
 	}
+	
+	vips_draw_flood(canvas_col, ink, 3, 0, 0, "equal", TRUE, NULL);
 	
 	char filename[256];
 	strcpy(filename, myCollage->outputFileName);
@@ -116,7 +99,6 @@ int main(int argc, char **argv) {
 	else 
 		printf ("\nvips started...\t\e[34myes\e[0m\ncurrent version installed:\t\e[34m%s\n\n\e[0m", vips_version_string());
 
-	//printf("\e[0;40m|  |\e[0;41m|  |\e[0;42m|  |\e[0;43m|  |\e[0;44m|  |\e[0;45m|  |\e[0;46m|  |\e[0;47m|  |\e[0m\n");
 	
 	ret=scanInputValue (argc, argv, &myCollage, sizeof myCollage );
 	if (ret<0)
@@ -134,6 +116,5 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
- //test/JPEG_1.jpg   
 
 
