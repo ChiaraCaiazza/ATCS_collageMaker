@@ -52,6 +52,7 @@ int get_layout(struct layout_t* out, int num_frame, int id_layout)
 {
 	config_setting_t *category_list, *category, *layout_list, *layout, *frame_list, *frame;
 	config_setting_t *pos, *size;
+
 	config_t layout_config;
 	int frame_length, i;
 	out->num_frames = num_frame;
@@ -78,15 +79,15 @@ int get_layout(struct layout_t* out, int num_frame, int id_layout)
 			printf("pos.x:\tONFIG_FALSE\n");
 		else printf("pos.x:\tok!\n");
 
-		if ( config_setting_lookup_float(pos, "y", &(out->frames[i].pos_y))==CONFIG_FALSE)
+if ( config_setting_lookup_float(pos, "y", &(out->frames[i].pos_y))==CONFIG_FALSE)
 			printf("pos.y:\tONFIG_FALSE\n");
 		else printf("pos.y:\tok!\n");
 		
-		if ( config_setting_lookup_float(size, "w", &(out->frames[i].width))==CONFIG_FALSE)
+if ( config_setting_lookup_float(size, "w", &(out->frames[i].width))==CONFIG_FALSE)
 			printf("size.w:\tONFIG_FALSE\n");
 		else printf("size.w:\tok!\n");
 
-		if ( config_setting_lookup_float(size, "h", &(out->frames[i].height))==CONFIG_FALSE)
+if ( config_setting_lookup_float(size, "h", &(out->frames[i].height))==CONFIG_FALSE)
 			printf("size.h:\tONFIG_FALSE\n");
 		else printf("size.h:\tok!\n");
 
@@ -154,7 +155,7 @@ void print_layouts(int num_frame)
 }
 
 
-int printColor()
+int printColor(int* RGBArray)
 {
 	config_setting_t *colorList, *layout;
 	config_t layoutConfig;
@@ -177,8 +178,12 @@ int printColor()
 	{
 		layout = config_setting_get_elem(colorList, i);
 		config_setting_lookup_string(layout, "name", &colorValue);
-		printf(" %i)\t", i);
+		printf(" %i)\t", i+1);
 		printf("%s\n", colorValue);
+		config_setting_lookup_int(layout, "r", &RGBArray[i*3]);
+		config_setting_lookup_int(layout, "g", &RGBArray[i*3+1]);
+		config_setting_lookup_int(layout, "b", &RGBArray[i*3+2]);
+		printf("\tR-G-B: %i-%i-%i\n",RGBArray[i*3],RGBArray[i*3+1],RGBArray[i*3+2]);
 	}
 	
 	config_destroy(&layoutConfig);

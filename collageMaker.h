@@ -11,9 +11,9 @@
 
 
 struct colour{
-	double x;
-	double y;
-	double z;
+	int r;
+	int g;
+	int b;
 };
 
 struct collage_t {

@@ -14,6 +14,7 @@ int extractExtension (char*);
 int chooseLayout(struct collage_t*, int);
 int chooseColor (struct collage_t*);
 void takeRGB (struct collage_t*);
+void takeSingleValue(int*);
 
 int retrieveInput(struct collage_t* myCollage, int size){
 	int ret, i;
@@ -32,6 +33,8 @@ int retrieveInput(struct collage_t* myCollage, int size){
 	ret=chooseColor(myCollage);	
 	if (ret<0)
 		return -1;
+
+	printf("\nQuesti sono i tuoi valori RGB:\t%i-%i-%i\n", myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
 
 	myCollage->images = (VipsImage**)malloc(sizeof(VipsImage*) * myCollage->num_images);
 
@@ -255,16 +258,18 @@ int chooseLayout(struct collage_t * myCollage, int size){
 
 int chooseColor(struct collage_t * myCollage){
 	char colorID[3];
+	int colID;
+	int *RGBArray=NULL;
 	int ret;
 
+	RGBArray=malloc((sizeof (int)*3*9)+1);
 	while(1)
 	{
 		printf("Scegli uno tra i sequenti colori o premi p per inserire il tuo RGB (q per terminare)\n");
-		ret = printColor();
+		ret = printColor(RGBArray);
 		if (ret<0)
 			return -1;
 		
-		getchar();
 		scanf ("%s", colorID);
 		if (strcmp(colorID,"p") == 0){
 			printf("Inserire un RGB\n");
@@ -276,6 +281,25 @@ int chooseColor(struct collage_t * myCollage){
 			printf("\e[91m\nOperazione terminata\n\n\e[0m");
 			return -1;
 		}
+		
+		colID=atoi(colorID);
+		if ((colID!=0) & (colID<9))
+		{
+			printf("colId:\t%i\n",colID);
+			colID--;
+			//printf("Length of XYZ:\t%i\n", XYZArray.length());
+			/*printf("\tX-Y-Z: %f-%f-%f\n",XYZArray[colID*3],XYZArray[colID*3+1],XYZArray[colID*3+2]);
+			myCollage->backgroundColour.x=XYZArray[colID*3];
+			myCollage->backgroundColour.y=XYZArray[colID*3+1];
+			myCollage->backgroundColour.z=XYZArray[colID*3+2];*/
+
+			printf("R-G-B: %i-%i-%i\n",RGBArray[colID*3],RGBArray[colID*3+1],RGBArray[colID*3+2]);
+			myCollage->backgroundColour.r=RGBArray[colID*3];
+			myCollage->backgroundColour.g=RGBArray[colID*3+1];
+			myCollage->backgroundColour.b=RGBArray[colID*3+2];
+			break;
+		}
+		
 	}
 	return 0;
 }
@@ -283,23 +307,40 @@ int chooseColor(struct collage_t * myCollage){
 void takeRGB(struct collage_t * myCollage)
 {
 	int R,G,B;
-	float x, y, z;
-
+	//float X, Y, Z;
+	
 	printf ("R:\t");
-	scanf("%i", &R);
+	takeSingleValue(&R);
 	printf ("G:\t");
-	scanf("%i", &G);
+	takeSingleValue(&G);
 	printf ("B:\t");
-	scanf("%i", &B);
+	takeSingleValue(&B);
 
 	printf("\nHai inserito i seguenti RGB%i-%i-%i\n", R, G, B);
 	
-	RGB2XYZ(R, G, B, &x, &y, &z);
+	/*RGB2XYZ(R, G, B, &X, &Y, &Z);
+
+	myCollage->backgroundColour.x=X;
+	myCollage->backgroundColour.y=Y;
+	myCollage->backgroundColour.z=Z;*/
+
+	myCollage->backgroundColour.r=R;
+	myCollage->backgroundColour.g=G;
+	myCollage->backgroundColour.b=B;
 	
-	myCollage->backgroundColour.x = x;
-	myCollage->backgroundColour.y = y;
-	myCollage->backgroundColour.z = z;
-	printf("\nQuesti sono i tuoi valori XYZ%f-%f-%f\n", x, y, z);
-	
+}
+
+void takeSingleValue(int* value){
+	while (1)
+	{
+		scanf("%i",value );
+		printf("\n");
+		
+		if ((*value<0)||(*value>255)){
+			printf("Inserire un valore tra 0 e 255\n");
+		}
+		else 
+			break;
+	}
 }
 
