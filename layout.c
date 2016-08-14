@@ -92,7 +92,7 @@ if ( config_setting_lookup_float(size, "h", &(out->frames[i].height))==CONFIG_FA
 		else printf("size.h:\tok!\n");
 
 		
-		//config_setting_lookup_float(frame, "rot", &(out->frames[i].rot));
+		config_setting_lookup_float(frame, "rot", &(out->frames[i].rot));
 	}
 
 	
