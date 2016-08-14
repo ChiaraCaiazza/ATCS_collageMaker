@@ -39,13 +39,10 @@ void create_collage(struct collage_t* myCollage)
 	VipsInterpretation try_interp;
 	try_interp = vips_image_guess_interpretation (canvas);
 	vips_colourspace(canvas, &canvas_col, VIPS_INTERPRETATION_sRGB, NULL);
-	/*
-	ink[0] = myCollage->backgroundColour.x;
-	ink[1] = myCollage->backgroundColour.y;
-	ink[2] = myCollage->backgroundColour.z;*/
-	ink[0] = 255;
-	ink[1] = 255;
-	ink[2] = 255;
+	ink[0] = myCollage->backgroundColour.r;
+	ink[1] = myCollage->backgroundColour.g;
+	ink[2] = myCollage->backgroundColour.b;
+
 	vips_draw_flood(canvas_col, ink, 3, 0, 0, NULL);	
 	
 	
