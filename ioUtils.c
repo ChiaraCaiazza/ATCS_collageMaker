@@ -9,22 +9,19 @@
 #include "imageUtils.h"
 
 
-int setLayout ( struct layout_t*, int);
 int extractExtension (char*);
 int chooseLayout(struct collage_t*, int);
 int chooseColor (struct collage_t*);
+int chooseFiles (struct collage_t*);
 void takeRGB (struct collage_t*);
 void takeSingleValue(int*);
 
-int retrieveInput(struct collage_t* myCollage, int size){
-	int ret, i;
-	char photoName[50];
 
-	printf ("\e[36;1m\nBenvenuto in collage maker\e[0m\n\n");
-	printf("Premere un tasto per visualizzare i layout disponibili per %i foto\n", myCollage->num_images);
+int retrieveInput(struct collage_t* myCollage, int size){
+	int ret;
+
+	printf ("\e[36;1m\nBenvenuto in collage maker\e[0m\n\nPremere un tasto per visualizzare i layout disponibili per %i foto\n", myCollage->num_images);
 	getchar();
-	
-	printf ("\e[35mAttenzione!!\n\nBisogna finire di implementare ancora tutta la parte di raccolta proferenze dall'utente!!\e[0m\n\n");
 	
 	ret=chooseLayout(myCollage, size);	
 	if (ret<0)
@@ -38,32 +35,9 @@ int retrieveInput(struct collage_t* myCollage, int size){
 
 	myCollage->images = (VipsImage**)malloc(sizeof(VipsImage*) * myCollage->num_images);
 
-	i=0;
-	while(i != myCollage->num_images){
-		struct stat fileStat;
-
-		printf("Inserire il nome della foto [q per terminare]\n");
-		scanf ("%s", photoName);
-		printf("\n");
-		if (strcmp(photoName,"q") == 0){
-			printf("\e[91m\nOperazione annullata\n\n\e[0m");
-			return -1;
-		}
-		
-		ret=extractExtension(photoName);
-		if (ret<0)
-			continue;
-		
-		if(stat(photoName,&fileStat) < 0) {
-   			printf("\e[91m\nErrore: file inesistente.\n\n\e[0m");
-        		continue;
-		}
- 		
-    		
-		myCollage->images[i] = vips_image_new_from_file (photoName, NULL);
-
-		i++;
-	}
+	ret=chooseFiles(myCollage);	
+	if (ret<0)
+		return -1;
 	
 	return 0;
 }
@@ -142,69 +116,12 @@ int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int coll
 
 
 void printSummary(struct collage_t* myCollage){
-	
 	printf("Summary\n");
 	printf("\tNumero di foto da stampare:\t%i\n", myCollage->num_images);
 	printf("\tNome del file finale:\t%s.%s\n", myCollage->outputFileName, myCollage->extension);
-
-	int i;
-	for (i= 0; i < myCollage->num_images; i++){
-		printf("i %i\n",i);
-		char* out=malloc( strlen(myCollage->outputFileName) + strlen(myCollage->extension)+2);
-		out= strcpy(out, myCollage->outputFileName);
-		out = strcat(out,".") ;
-		out = strcat(out, myCollage->extension);
-
-		vips_image_write_to_file (myCollage->images[i], out, NULL);
-	}
+	printf("\tRGB:\t%i-%i-%i\n",myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
 }
 
-
-
-int setLayout ( struct layout_t* myLayout, int size)
-{
-	return 1;
-}
-
-
-int printASCIIArt(int numPhoto){
-	/*switch (numPhoto)
-	{
-		case 2:
-			printf("\nA):\e[34m\n\t\t _____________\n\t\t|      |      |\n\t\t|      |      |\n\t\t|      |      |\n\t\t|      |      |\n\t\t|      |      |\n\t\t|______|______|\n\n\e[0m");
-			printf("\nB):\e[34m\n\t\t _____________\n\t\t|             |\n\t\t|             |\n\t\t|             |\n\t\t|_____________|\n\t\t|             |\n\t\t|             |\n\t\t|             |\n\t\t|_____________|\n\n\e[0m");
-			printf("\nC):\e[34m\n\t\t _________________\n\t\t| ______   ______ |\n\t\t||      | |      ||\n\t\t||      | |      ||\n\t\t||      | |      ||\n\t\t||      | |      ||\n\t\t||      | |      ||\n\t\t||______| |______||\n\t\t|_________________|\n\n\e[0m");
-			printf("\nD):\e[34m\n\t\t ______________\n\t\t| ____________ |\n\t\t||            ||\n\t\t||            ||\n\t\t||            ||\n\t\t||____________||\n\t\t| ____________ |\n\t\t||            ||\n\t\t||            ||\n\t\t||            ||\n\t\t||____________||\n\t\t|______________|\n\n\e[0m");
-			
-			break;
-		case 3:
-			printf ("\e[35mError: ASCII art for %i not found\e[0m\n\n", numPhoto);
-			
-			
-			break;
-		case 4:
-			printf ("\e[35mError: ASCII art for %i not found\e[0m\n\n", numPhoto);
-			
-			
-			break;
-		case 5:
-			
-			printf ("\e[35mError: ASCII art for %i not found\e[0m\n\n", numPhoto);
-			
-			break;
-		case 6:
-			
-			
-			printf ("\e[35mError: ASCII art for %i not found\e[0m\n\n", numPhoto);
-			
-			break;
-		default:
-			printf ("\e[31mError in retrieving ASCII art");
-			return -1;
-	
-	}*/
-	return 0;
-}
 
 
 int extractExtension (char* photoName){
@@ -284,21 +201,12 @@ int chooseColor(struct collage_t * myCollage){
 		colID=atoi(colorID);
 		if ((colID!=0) & (colID<9))
 		{
-			printf("colId:\t%i\n",colID);
 			colID--;
-			//printf("Length of XYZ:\t%i\n", XYZArray.length());
-			/*printf("\tX-Y-Z: %f-%f-%f\n",XYZArray[colID*3],XYZArray[colID*3+1],XYZArray[colID*3+2]);
-			myCollage->backgroundColour.x=XYZArray[colID*3];
-			myCollage->backgroundColour.y=XYZArray[colID*3+1];
-			myCollage->backgroundColour.z=XYZArray[colID*3+2];*/
-
-			printf("R-G-B: %i-%i-%i\n",RGBArray[colID*3],RGBArray[colID*3+1],RGBArray[colID*3+2]);
 			myCollage->backgroundColour.r=RGBArray[colID*3];
 			myCollage->backgroundColour.g=RGBArray[colID*3+1];
 			myCollage->backgroundColour.b=RGBArray[colID*3+2];
 			break;
 		}
-		
 	}
 	return 0;
 }
@@ -306,7 +214,6 @@ int chooseColor(struct collage_t * myCollage){
 void takeRGB(struct collage_t * myCollage)
 {
 	int R,G,B;
-	//float X, Y, Z;
 	
 	printf ("R:\t");
 	takeSingleValue(&R);
@@ -316,12 +223,6 @@ void takeRGB(struct collage_t * myCollage)
 	takeSingleValue(&B);
 
 	printf("\nHai inserito i seguenti RGB%i-%i-%i\n", R, G, B);
-	
-	/*RGB2XYZ(R, G, B, &X, &Y, &Z);
-
-	myCollage->backgroundColour.x=X;
-	myCollage->backgroundColour.y=Y;
-	myCollage->backgroundColour.z=Z;*/
 
 	myCollage->backgroundColour.r=R;
 	myCollage->backgroundColour.g=G;
@@ -341,5 +242,36 @@ void takeSingleValue(int* value){
 		else 
 			break;
 	}
+}
+
+int chooseFiles(struct collage_t* myCollage){
+	int i, ret;
+	char photoName[50];
+	struct stat fileStat;
+	
+	i=0;
+	while(i != myCollage->num_images){
+		printf("Inserire il nome della foto [q per terminare]\n");
+		scanf ("%s", photoName);
+		printf("\n");
+		if (strcmp(photoName,"q") == 0){
+			printf("\e[91m\nOperazione annullata\n\n\e[0m");
+			return -1;
+		}
+		
+		ret=extractExtension(photoName);
+		if (ret<0)
+			continue;
+		
+		if(stat(photoName,&fileStat) < 0) {
+   			printf("\e[91m\nErrore: file inesistente.\n\n\e[0m");
+        		continue;
+		}
+ 		
+		myCollage->images[i] = vips_image_new_from_file (photoName, NULL);
+		i++;
+	}
+
+	return 1;
 }
 
