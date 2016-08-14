@@ -1,4 +1,5 @@
 #include "imageUtils.h"
+#include <math.h>
 
 int 
 RGB2XYZ(int r, int g, int b, float* x, float* y, float* z){
@@ -121,5 +122,23 @@ find_best_match(double* images_ratio, double* frames_ratio, int num_elem){
 	return ret;
 }
 
+void protect_image_from_flood(VipsImage* image)
+{
+	vips_draw_rect1(image, 255.0, 0, 0, get_width(image), get_height(image), NULL);
+}
+
+void rotate_image(VipsImage** image, double rotation)
+{
+	VipsImage* temp_image;
+	double rotation_rad = rotation / (180.0 / M_PI);
+	double a, b, c, d;
+	a = cos(rotation_rad);
+	b = -sin(rotation_rad);
+	c = sin(rotation_rad);
+	d = cos(rotation_rad);
+	
+	vips_affine (*image , &temp_image, a, b, c, d, NULL);
+	*image = temp_image;
+}
 
 
