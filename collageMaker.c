@@ -43,7 +43,7 @@ void create_collage(struct collage_t* myCollage)
 	ink[1] = myCollage->backgroundColour.g;
 	ink[2] = myCollage->backgroundColour.b;
 
-	vips_draw_flood(canvas_col, ink, 3, 0, 0, NULL);	
+		
 	
 	
 	
@@ -95,6 +95,8 @@ void create_collage(struct collage_t* myCollage)
 		
 				
 	}
+	
+	vips_draw_flood(canvas_col, ink, 3, 0, 0, "equal", TRUE, NULL);
 	
 	char filename[256];
 	strcpy(filename, myCollage->outputFileName);
