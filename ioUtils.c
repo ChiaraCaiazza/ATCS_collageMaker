@@ -260,14 +260,13 @@ int chooseColor(struct collage_t * myCollage){
 	char colorID[3];
 	int colID;
 	int *RGBArray=NULL;
-	int ret;
 
-	RGBArray=malloc((sizeof (int)*3*9)+1);
+	//RGBArray=malloc((sizeof (int)*3*9)+1);
 	while(1)
 	{
 		printf("Scegli uno tra i sequenti colori o premi p per inserire il tuo RGB (q per terminare)\n");
-		ret = printColor(RGBArray);
-		if (ret<0)
+		RGBArray = printColor();
+		if (RGBArray==NULL)
 			return -1;
 		
 		scanf ("%s", colorID);

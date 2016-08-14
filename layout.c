@@ -155,12 +155,13 @@ void print_layouts(int num_frame)
 }
 
 
-int printColor(int* RGBArray)
+int* printColor()
 {
 	config_setting_t *colorList, *layout;
 	config_t layoutConfig;
 	int colorLength, i;
 	const char* colorValue;
+	int* RGBArray;
 
 	config_init(&layoutConfig);
 	if (!config_read_file(&layoutConfig, "./layout.cfg")) {
@@ -169,11 +170,12 @@ int printColor(int* RGBArray)
             	config_error_line(&layoutConfig),
             	config_error_text(&layoutConfig));
         	config_destroy(&layoutConfig);
-        	return -1;
+        	return NULL;
     	}
 	
 	colorList = config_lookup(&layoutConfig, "application.colors");
 	colorLength = config_setting_length(colorList);
+	RGBArray=malloc(sizeof (int)*3*colorLength);
 	for(i = 0; i < colorLength; i++)
 	{
 		layout = config_setting_get_elem(colorList, i);
@@ -187,7 +189,7 @@ int printColor(int* RGBArray)
 	}
 	
 	config_destroy(&layoutConfig);
-	return 0;
+	return RGBArray;
 }
 
 double* frame_width_over_height(struct layout_t* layout){
