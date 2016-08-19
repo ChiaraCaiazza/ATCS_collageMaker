@@ -4,13 +4,25 @@
 #include "layout.h"
 #include "imageUtils.h"
 
+void fit_image_into_frame(struct collage_t* collage, int image, int frame)
+{
+	VipsImage *temp_image;
+	int frame_width = get_frame_width(&collage->layout, frame) * collage->canvas_width;
+	int frame_height = get_frame_height(&collage->layout, frame) * collage->canvas_height;
+	double scale_x = (double)frame_width / (double)get_width(collage->images[image]);
+	double scale_y = (double)frame_height / (double)get_height(collage->images[image]);
+	
+	double scale = (scale_x < scale_y)? scale_x : scale_y;
+	vips_resize(collage->images[image], &temp_image, scale,  NULL);
+	collage->images[image] = temp_image;
+}
+
 void create_collage(struct collage_t* myCollage)
 {
 	int min_res, frame_min_res = 0, i;
 	int *frame2photo;
-	int canvasWidth, canvasHeight;
 	double  *images_WHratio, *frames_WHratio;
-	VipsImage *canvas, *canvas_col;
+	VipsImage *canvas;
 	double ink[3];
 	
 	min_res = min_resol(myCollage->images, myCollage->num_images);
@@ -28,48 +40,35 @@ void create_collage(struct collage_t* myCollage)
 	}
 	
 	//photo width / (% width frame)
-	canvasWidth = (int) (get_width(myCollage->images[min_res]) / 
-							get_frame_width(&myCollage->layout, frame_min_res));
+	myCollage->canvas_width = (int) (get_width(myCollage->images[min_res]) / 
+									get_frame_width(&myCollage->layout, frame_min_res));
 	//photo height / (% height frame)
-	canvasHeight = (int) (get_height(myCollage->images[min_res]) / 
-							get_frame_height(&myCollage->layout, frame_min_res));
+	myCollage->canvas_height = (int) (get_height(myCollage->images[min_res]) / 
+									get_frame_height(&myCollage->layout, frame_min_res));
 	
 	
 	//create black canvas
-	vips_black (&canvas, canvasWidth, canvasHeight, NULL);
-	
-	//paint the canvas with the colour chosen by the user
-	VipsInterpretation try_interp;
-	try_interp = vips_image_guess_interpretation (canvas);
-	vips_colourspace(canvas, &canvas_col, VIPS_INTERPRETATION_sRGB, NULL);
-	ink[0] = myCollage->backgroundColour.r;
-	ink[1] = myCollage->backgroundColour.g;
-	ink[2] = myCollage->backgroundColour.b;
-	
+	canvas = create_blank_canvas(myCollage->canvas_width, myCollage->canvas_height);
 	
 	for(i = 0; i < myCollage->num_images; i++)
 	{
-		VipsImage *temp_image;
+		
 		int image_i = frame2photo[i];
-		int frame_width = get_frame_width(&myCollage->layout, i) * canvasWidth;
-		int frame_height = get_frame_height(&myCollage->layout, i) * canvasHeight;
 		if(image_i != min_res)
 		{
-			//scale the photo
-			double scale_x = (double)frame_width / (double)get_width(myCollage->images[image_i]);
-			double scale_y = (double)frame_height / (double)get_height(myCollage->images[image_i]);
-			
-			double scale = (scale_x < scale_y)? scale_x : scale_y;
-			vips_resize(myCollage->images[image_i], &temp_image, scale,  NULL);
-			myCollage->images[image_i] = temp_image;
+			//scale photo to fit into the frame
+			fit_image_into_frame(myCollage, image_i, i);	
 		}
 		
 		protect_image_from_flood(myCollage->images[image_i]);
 		
 		/* the horizontal/vertical position of the frame is given by the horizontal/vertical position 
 		(%) times the conversion coefficient*/
-		int frame_posX = get_frame_posX(&myCollage->layout, i) * canvasWidth;
-		int frame_posY = get_frame_posY(&myCollage->layout, i) * canvasHeight;
+		int frame_posX = get_frame_posX(&myCollage->layout, i) * myCollage->canvas_width;
+		int frame_posY = get_frame_posY(&myCollage->layout, i) * myCollage->canvas_height;
+		
+		int frame_width = get_frame_width(&myCollage->layout, i) * myCollage->canvas_width;
+		int frame_height = get_frame_height(&myCollage->layout, i) * myCollage->canvas_height;
 		
 		/* the image position is the frame position shifted by half of the difference between the 
 		width/height of the frame and width/height of the photo (difference may be 0)*/
@@ -82,17 +81,22 @@ void create_collage(struct collage_t* myCollage)
 			rotate_image(&(myCollage->images[i]), frame_rot);
 		}
 		
-		vips_draw_image(canvas_col, myCollage->images[image_i], image_posX, image_posY, NULL);
+		vips_draw_image(canvas, myCollage->images[image_i], image_posX, image_posY, NULL);
 				
 	}
 	
-	vips_draw_flood(canvas_col, ink, 3, 0, 0, "equal", TRUE, NULL);
+	//paint with background colour chosen by user
+	ink[0] = myCollage->backgroundColour.r;
+	ink[1] = myCollage->backgroundColour.g;
+	ink[2] = myCollage->backgroundColour.b;
+	vips_draw_flood(canvas, ink, 3, 0, 0, "equal", TRUE, NULL);
 	
+	//store collage in a file
 	char filename[256];
 	strcpy(filename, myCollage->outputFileName);
 	strcat(filename, ".");
 	strcat(filename, myCollage->extension);
-	vips_image_write_to_file (canvas_col, filename, NULL);
+	vips_image_write_to_file (canvas, filename, NULL);
 }
 
 int main(int argc, char **argv) {

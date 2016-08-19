@@ -21,6 +21,8 @@ struct collage_t {
 	char* extension;
 	int num_images;
 	VipsImage** images;
+	int canvas_width;
+	int canvas_height;
 	struct colour backgroundColour;
 	struct layout_t layout;
 };
