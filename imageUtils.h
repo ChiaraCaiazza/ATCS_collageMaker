@@ -34,6 +34,9 @@ They function returns the best match between images and frames in the form of an
 index is the image index and the value is the frame index associated to the image. */
 int* find_best_match(double* images_ratio, double* frames_ratio, int num_elem);
 
+//The function creates a blank canvas ready to be used by other draw functions
+VipsImage* create_blank_canvas(int width, int height);
+
 /*The function inserts a border (1pixel) around the image to avoid that the flood operation 
 continues inside the image (expecially for black-based images)*/
 void protect_image_from_flood(VipsImage* image);

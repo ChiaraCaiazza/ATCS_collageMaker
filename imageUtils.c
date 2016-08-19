@@ -113,6 +113,15 @@ int* find_best_match(double* images_ratio, double* frames_ratio, int num_elem){
 	return ret;
 }
 
+VipsImage* create_blank_canvas(int width, int height)
+{
+	VipsImage *canvas, *canvas_drawable;
+	vips_black (&canvas, width, height, NULL);
+	vips_colourspace(canvas, &canvas_drawable, VIPS_INTERPRETATION_sRGB, NULL);
+	
+	return canvas_drawable;
+}
+
 void protect_image_from_flood(VipsImage* image)
 {
 	vips_draw_rect1(image, 255.0, 0, 0, get_width(image), get_height(image), NULL);
