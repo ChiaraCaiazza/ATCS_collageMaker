@@ -79,7 +79,7 @@ int* find_best_match(double* images_ratio, double* frames_ratio, int num_elem){
 	double min;
 	int* ret = (int*)malloc(sizeof(int)*num_elem);
 	double** matrix = (double**)malloc(sizeof(double*)*num_elem);
-	for (i=0; i<num_elem; i++){		
+	for (i=0; i < num_elem; i++){		
 		matrix[i] = (double*)malloc(sizeof(double)*num_elem);
 	}
 	for (i=0; i<num_elem; i++){	//for every image
@@ -103,7 +103,7 @@ int* find_best_match(double* images_ratio, double* frames_ratio, int num_elem){
 				}
 			}
 		}
-		ret[image_index] = frame_index;
+		ret[frame_index] = image_index;
 		remaining--;
 		for (i=0; i<num_elem; i++){
 			matrix[image_index][i] = 10.0;
