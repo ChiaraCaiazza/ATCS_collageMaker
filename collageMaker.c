@@ -60,7 +60,7 @@ void create_collage(struct collage_t* myCollage)
 			fit_image_into_frame(myCollage, image_i, i);	
 		}
 		
-		//protect_image_from_flood(myCollage->images[image_i]);
+		protect_image_from_flood(myCollage->images[image_i]);
 		
 		/* the horizontal/vertical position of the frame is given by the horizontal/vertical position 
 		(%) times the conversion coefficient*/
