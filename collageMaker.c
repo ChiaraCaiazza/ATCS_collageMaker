@@ -60,7 +60,7 @@ void create_collage(struct collage_t* myCollage)
 			fit_image_into_frame(myCollage, image_i, i);	
 		}
 		
-		protect_image_from_flood(myCollage->images[image_i]);
+		//protect_image_from_flood(myCollage->images[image_i]);
 		
 		/* the horizontal/vertical position of the frame is given by the horizontal/vertical position 
 		(%) times the conversion coefficient*/
@@ -76,9 +76,9 @@ void create_collage(struct collage_t* myCollage)
 		int image_posY = frame_posY + ( frame_height - get_height(myCollage->images[image_i]) )/2;
 		
 		double frame_rot = get_frame_rot(&myCollage->layout, i);
-		if( frame_rot != 0)
+		if( frame_rot != 0.0)
 		{
-			rotate_image(&(myCollage->images[i]), frame_rot);
+			rotate_image(&(myCollage->images[image_i]), frame_rot);
 		}
 		
 		vips_draw_image(canvas, myCollage->images[image_i], image_posX, image_posY, NULL);
