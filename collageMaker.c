@@ -63,7 +63,7 @@ void insert_collage_image(struct collage_t* collage, int frame_index, int image_
 	vips_draw_image(canvas, collage->images[image_index], image_posX, image_posY, NULL);
 }
 
-void create_collage(struct collage_t* myCollage)
+void create_collage(struct collage_t* collage)
 {
 	int min_res, frame_min_res = 0, i;
 	int *frame2photo;
@@ -71,12 +71,12 @@ void create_collage(struct collage_t* myCollage)
 	double frame_rot, frame_width_perc, frame_height_perc;
 	VipsImage *canvas;
 	
-	min_res = min_resol(myCollage->images, myCollage->num_images);
-	images_WHratio = image_width_over_height(myCollage->images, myCollage->num_images);
-	frames_WHratio = frame_width_over_height(&myCollage->layout);
-	frame2photo = find_best_match(images_WHratio, frames_WHratio, myCollage->num_images);
+	min_res = min_resol(collage->images, collage->num_images);
+	images_WHratio = image_width_over_height(collage->images, collage->num_images);
+	frames_WHratio = frame_width_over_height(&collage->layout);
+	frame2photo = find_best_match(images_WHratio, frames_WHratio, collage->num_images);
 	
-	for(i = 0; i < myCollage->num_images; i++)
+	for(i = 0; i < collage->num_images; i++)
 	{
 		if(frame2photo[i] == min_res)
 		{
@@ -85,19 +85,19 @@ void create_collage(struct collage_t* myCollage)
 		}
 	}
 	
-	frame_width_perc = get_frame_width(&myCollage->layout, frame_min_res);
-	frame_height_perc = get_frame_height(&myCollage->layout, frame_min_res);
-	frame_rot = get_frame_rot(&myCollage->layout, frame_min_res);
+	frame_width_perc = get_frame_width(&collage->layout, frame_min_res);
+	frame_height_perc = get_frame_height(&collage->layout, frame_min_res);
+	frame_rot = get_frame_rot(&collage->layout, frame_min_res);
 	if(frame_rot != 0.0)
 	{
-		protect_image_from_flood(myCollage->images[min_res]);
-		rotate_image(&(myCollage->images[min_res]), frame_rot);
+		protect_image_from_flood(collage->images[min_res]);
+		rotate_image(&(collage->images[min_res]), frame_rot);
 		frame_rot = frame_rot / (180.0 / M_PI);
 		
-		myCollage->canvas_width = (int) (get_width(myCollage->images[min_res]) / 
+		collage->canvas_width = (int) (get_width(collage->images[min_res]) / 
 										(frame_height_perc * fabs(sin(frame_rot)) 
 											+ frame_width_perc * fabs(cos(frame_rot))));
-		myCollage->canvas_height = (int) (get_height(myCollage->images[min_res]) / 
+		collage->canvas_height = (int) (get_height(collage->images[min_res]) / 
 										(frame_height_perc * fabs(cos(frame_rot)) 
 											+ frame_width_perc * fabs(sin(frame_rot))));
 
@@ -105,51 +105,51 @@ void create_collage(struct collage_t* myCollage)
 	else
 	{
 		//photo width / (% width frame)
-		myCollage->canvas_width = (int) (get_width(myCollage->images[min_res]) / 
+		collage->canvas_width = (int) (get_width(collage->images[min_res]) / 
 										frame_width_perc);
 		//photo height / (% height frame)
-		myCollage->canvas_height = (int) (get_height(myCollage->images[min_res]) / 
+		collage->canvas_height = (int) (get_height(collage->images[min_res]) / 
 										frame_height_perc);
 	}
 
 	//create black canvas
-	canvas = create_blank_canvas(myCollage->canvas_width, myCollage->canvas_height);
+	canvas = create_blank_canvas(collage->canvas_width, collage->canvas_height);
 	
-	for(i = 0; i < myCollage->num_images; i++)
+	for(i = 0; i < collage->num_images; i++)
 	{
 		int image_i = frame2photo[i];
 		
 		//scale photo to fit into the frame
 		if(image_i != min_res)
 		{
-			fit_image_into_frame(myCollage, image_i, i);	
-			protect_image_from_flood(myCollage->images[image_i]);
+			fit_image_into_frame(collage, image_i, i);	
+			protect_image_from_flood(collage->images[image_i]);
 			
-			frame_rot = get_frame_rot(&myCollage->layout, i);
+			frame_rot = get_frame_rot(&collage->layout, i);
 			if(frame_rot != 0.0)
 			{
 				//rotate photo
-				rotate_image(&(myCollage->images[image_i]), frame_rot);
+				rotate_image(&(collage->images[image_i]), frame_rot);
 			}
 			
 		}
 		
 		//insert photo
-		insert_collage_image(myCollage, i, image_i, canvas);
+		insert_collage_image(collage, i, image_i, canvas);
 				
 	}
 	
 	//paint with background colour chosen by user
-	ink[0] = myCollage->backgroundColour.r;
-	ink[1] = myCollage->backgroundColour.g;
-	ink[2] = myCollage->backgroundColour.b;
+	ink[0] = collage->background_colour.r;
+	ink[1] = collage->background_colour.g;
+	ink[2] = collage->background_colour.b;
 	vips_draw_flood(canvas, ink, 3, 0, 0, "equal", TRUE, NULL);
 	
 	//store collage in a file
 	char filename[256];
-	strcpy(filename, myCollage->outputFileName);
+	strcpy(filename, collage->output_file_name);
 	strcat(filename, ".");
-	strcat(filename, myCollage->extension);
+	strcat(filename, collage->extension);
 	vips_image_write_to_file (canvas, filename, NULL);
 }
 
@@ -158,9 +158,7 @@ void create_collage(struct collage_t* myCollage)
 
 int main(int argc, char **argv) {
 	int ret;
-
-	struct collage_t myCollage;
-
+	struct collage_t collage;
 
 	if (vips_init (argv[0])){
     		vips_error_exit ("Unable to start VIPS");
@@ -169,17 +167,15 @@ int main(int argc, char **argv) {
 	
 	printf ("\e[36;1m\n\n\t\t--- Welcome in collage maker ---\e[0m\n\n");
 
-	ret=scanInputValue (argc, argv, &myCollage, sizeof myCollage );
+	ret = scan_input(argc, argv, &collage, sizeof collage );
 	if (ret<0)
 		return -1;
-
-	
-	ret = retrieveInput(&myCollage, sizeof myCollage);
+	ret = retrieve_input(&collage, sizeof collage);
 	if (ret<0)
 		return -1;
+	print_summary(&collage);
 
-	printSummary(&myCollage);
-	create_collage(&myCollage);
+	create_collage(&collage);
 
 	vips_shutdown();
 

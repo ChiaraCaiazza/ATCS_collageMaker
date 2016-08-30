@@ -9,10 +9,12 @@ int get_height(const VipsImage *image) {
 	return vips_image_get_height(image);
 }
 
+//horizontal image resolution in pixels per millimeter
 double get_horiz_resol(const VipsImage *image) {
 	return vips_image_get_xres(image);
 }
 
+//vertical image resolution in pixels per millimeter
 double get_vert_resol(const VipsImage *image) {
 	return vips_image_get_yres(image);
 }

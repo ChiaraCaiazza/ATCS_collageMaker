@@ -8,12 +8,6 @@ int get_width(const VipsImage *image);
 
 int get_height(const VipsImage *image);
 
-//horizontal image resolution in pixels per millimeter
-double get_horiz_resol(const VipsImage *image);
-
-//vertical image resolution in pixels per millimeter
-double get_vert_resol(const VipsImage *image);
-
 //the function returns the index into the array corresponding to the element with the minimum resolution
 int min_resol(VipsImage **img_array, int num_elem);
 
