@@ -3,6 +3,7 @@
 #include "ioUtils.h"
 #include "layout.h"
 #include "imageUtils.h"
+#include <math.h>
 
 void fit_image_into_frame(struct collage_t* collage, int image, int frame)
 {
@@ -17,13 +18,57 @@ void fit_image_into_frame(struct collage_t* collage, int image, int frame)
 	collage->images[image] = temp_image;
 }
 
+void insert_collage_image(struct collage_t* collage, int frame_index, int image_index, VipsImage* canvas)
+{
+	int box_posX, box_posY, box_width, box_height;
+	int image_posX, image_posY;
+	double frame_width_perc, frame_height_perc, frame_rot;
+	
+	/* the horizontal/vertical position of the frame is given by the horizontal/vertical position 
+	(%) times the conversion coefficient*/
+	box_posX = get_frame_posX(&collage->layout, frame_index) * collage->canvas_width;
+	box_posY = get_frame_posY(&collage->layout, frame_index) * collage->canvas_height;
+	
+	frame_width_perc = get_frame_width(&collage->layout, frame_index);
+	frame_height_perc = get_frame_height(&collage->layout, frame_index);
+	
+	frame_rot = get_frame_rot(&collage->layout, frame_index);	
+	if(frame_rot != 0.0)
+	{
+		frame_rot = frame_rot / (180.0 / M_PI);
+		//W_box = W_frame * |sin(alpha)| + H_frame * |cos(alpha)|
+		box_width = (int)(frame_width_perc * fabs(cos(frame_rot)) * collage->canvas_width + 
+					frame_height_perc * fabs(sin(frame_rot)) * collage->canvas_height);
+		
+		//H_box = W_frame * |cos(alpha)| + H_frame * |sin(alpha)|
+		box_height = (int)(frame_width_perc * fabs(sin(frame_rot)) * collage->canvas_width + 
+					frame_height_perc * fabs(cos(frame_rot)) * collage->canvas_height);
+	}
+	else
+	{
+		//W = W_frame
+		box_width = (int)(frame_width_perc * collage->canvas_width);
+		//H = H_frame
+		box_height = (int)(frame_height_perc * collage->canvas_height);
+	}
+
+	/* the image position is the frame position shifted by half of the difference between the 
+	width/height of the frame and width/height of the photo (difference may be 0)*/
+	printf("%d) box_width %d, image_width %d\n", frame_index, box_width, get_width(collage->images[image_index]));
+	printf("box_height %d, image_height %d\n", box_height, get_height(collage->images[image_index]));
+	image_posX = box_posX + ( box_width - get_width(collage->images[image_index]) ) / 2;
+	image_posY = box_posY + ( box_height - get_height(collage->images[image_index]) ) / 2;
+	
+	vips_draw_image(canvas, collage->images[image_index], image_posX, image_posY, NULL);
+}
+
 void create_collage(struct collage_t* myCollage)
 {
 	int min_res, frame_min_res = 0, i;
 	int *frame2photo;
-	double  *images_WHratio, *frames_WHratio;
+	double  *images_WHratio, *frames_WHratio, ink[3];
+	double frame_rot, frame_width_perc, frame_height_perc;
 	VipsImage *canvas;
-	double ink[3];
 	
 	min_res = min_resol(myCollage->images, myCollage->num_images);
 	images_WHratio = image_width_over_height(myCollage->images, myCollage->num_images);
@@ -39,14 +84,33 @@ void create_collage(struct collage_t* myCollage)
 		}
 	}
 	
-	//photo width / (% width frame)
-	myCollage->canvas_width = (int) (get_width(myCollage->images[min_res]) / 
-									get_frame_width(&myCollage->layout, frame_min_res));
-	//photo height / (% height frame)
-	myCollage->canvas_height = (int) (get_height(myCollage->images[min_res]) / 
-									get_frame_height(&myCollage->layout, frame_min_res));
-	
-	
+	frame_width_perc = get_frame_width(&myCollage->layout, frame_min_res);
+	frame_height_perc = get_frame_height(&myCollage->layout, frame_min_res);
+	frame_rot = get_frame_rot(&myCollage->layout, frame_min_res);
+	if( frame_rot != 0.0)
+	{
+		protect_image_from_flood(myCollage->images[min_res]);
+		rotate_image(&(myCollage->images[min_res]), frame_rot);
+		frame_rot = frame_rot / (180.0 / M_PI);
+		
+		myCollage->canvas_width = (int) (get_width(myCollage->images[min_res]) / 
+										(frame_height_perc * fabs(sin(frame_rot)) 
+											+ frame_width_perc * fabs(cos(frame_rot))));
+		myCollage->canvas_height = (int) (get_height(myCollage->images[min_res]) / 
+										(frame_height_perc * fabs(cos(frame_rot)) 
+											+ frame_width_perc * fabs(sin(frame_rot))));
+
+	}
+	else
+	{
+		//photo width / (% width frame)
+		myCollage->canvas_width = (int) (get_width(myCollage->images[min_res]) / 
+										frame_width_perc);
+		//photo height / (% height frame)
+		myCollage->canvas_height = (int) (get_height(myCollage->images[min_res]) / 
+										frame_height_perc);
+	}
+
 	//create black canvas
 	canvas = create_blank_canvas(myCollage->canvas_width, myCollage->canvas_height);
 	
@@ -54,34 +118,24 @@ void create_collage(struct collage_t* myCollage)
 	{
 		
 		int image_i = frame2photo[i];
+		
+		//scale photo to fit into the frame
 		if(image_i != min_res)
 		{
-			//scale photo to fit into the frame
 			fit_image_into_frame(myCollage, image_i, i);	
+			protect_image_from_flood(myCollage->images[image_i]);
+			
+			frame_rot = get_frame_rot(&myCollage->layout, i);
+			if(frame_rot != 0.0)
+			{
+				//rotate photo
+				rotate_image(&(myCollage->images[image_i]), frame_rot);
+			}
+			
 		}
 		
-		protect_image_from_flood(myCollage->images[image_i]);
-		
-		/* the horizontal/vertical position of the frame is given by the horizontal/vertical position 
-		(%) times the conversion coefficient*/
-		int frame_posX = get_frame_posX(&myCollage->layout, i) * myCollage->canvas_width;
-		int frame_posY = get_frame_posY(&myCollage->layout, i) * myCollage->canvas_height;
-		
-		int frame_width = get_frame_width(&myCollage->layout, i) * myCollage->canvas_width;
-		int frame_height = get_frame_height(&myCollage->layout, i) * myCollage->canvas_height;
-		
-		/* the image position is the frame position shifted by half of the difference between the 
-		width/height of the frame and width/height of the photo (difference may be 0)*/
-		int image_posX = frame_posX + ( frame_width - get_width(myCollage->images[image_i]) )/2;
-		int image_posY = frame_posY + ( frame_height - get_height(myCollage->images[image_i]) )/2;
-		
-		double frame_rot = get_frame_rot(&myCollage->layout, i);
-		if( frame_rot != 0.0)
-		{
-			rotate_image(&(myCollage->images[image_i]), frame_rot);
-		}
-		
-		vips_draw_image(canvas, myCollage->images[image_i], image_posX, image_posY, NULL);
+		//insert photo
+		insert_collage_image(myCollage, i, image_i, canvas);
 				
 	}
 	
