@@ -143,7 +143,7 @@ void print_layouts(int num_frame)
 	{
 		layout = config_setting_get_elem(layout_list, i);
 		config_setting_lookup_string(layout, "image", &ascii_image);
-		printf(" %c)\n", 'A' + i);
+		printf(" %c)\n", 'a' + i);
 		printf("%s\n", ascii_image);
 	}
 	

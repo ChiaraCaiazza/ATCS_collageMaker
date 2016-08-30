@@ -9,50 +9,17 @@
 #include "imageUtils.h"
 
 
-int extractExtension (char*);
-int chooseLayout(struct collage_t*, int);
-int chooseColor (struct collage_t*);
-int chooseFiles (struct collage_t*);
-void takeRGB (struct collage_t*);
-void takeSingleValue(int*);
-
-
-int retrieveInput(struct collage_t* myCollage, int size){
-	int ret;
-
-	printf ("\e[36;1m\nWelcome in collage maker\e[0m\n\nPress a key to see the available layouts for %i photos\n", myCollage->num_images);
-	getchar();
-	
-	ret=chooseLayout(myCollage, size);	
-	if (ret<0)
-		return -1;
-
-	ret=chooseColor(myCollage);	
-	if (ret<0)
-		return -1;
-
-	printf("\nThis are your RGB values:\t%i-%i-%i\n", myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
-
-	myCollage->images = (VipsImage**)malloc(sizeof(VipsImage*) * myCollage->num_images);
-
-	ret=chooseFiles(myCollage);	
-	if (ret<0)
-		return -1;
-	
-	return 0;
-}
-
-
 int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int collage_size){	
 	int  nValue, c;
 	char *tValue, *oValue;
-
 	
 	opterr = 0;
 	nValue=0;
 	tValue=NULL;
 	oValue=NULL;
 	
+	printf("Usage:\e[36m ./collageMaker  [-n num_photos] [-t extension] [-o output]\e[0m\n\n");
+
 	while ((c = getopt (argc, argv, "n:t:o:")) != -1)
 		switch (c){
 			case 'n':
@@ -72,7 +39,7 @@ int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int coll
 			case 't':
 				tValue = optarg;
 				if ((strcmp(tValue,"png")!=0) && (strcmp(tValue,"jpg")!=0)){
-					printf("\e[36m%s\e[0m is not a valid photo extension.\nThe default one will be used \e[36m\"png\"\e[0m\n", tValue);
+					printf("%s is not a valid photo extension.\nThe default one (.png) will be used.\n", tValue);
 					tValue="png";
 				}
 				break;
@@ -86,28 +53,19 @@ int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int coll
 				return -1;
   		}
 
-	c=0;
-	
 	//check if all parameters have been set
 	if (nValue==0){
 		printf("You haven't chosen a valid number of photos.\nThe default value n=\e[36m2\e[0m will be used.\n");
 		nValue=2;
-		c=1;
 	}
 	if (tValue==NULL){
-		printf("You haven't chosen a valid photo extension for the output.\nThe default extension \e[36m\"png\"\e[0m will be used.\n");
+		printf("You haven't chosen a valid photo extension for the output.\nThe default extension \e[36m.png\e[0m will be used.\n");
 		tValue="png";
-		c=1;
 	}
 	if (oValue==NULL){
 		printf("You haven't chosen a valid name for the output.\nThe default name \e[36m\"collageMakerOutput\"\e[0m will be used.\n");
 		oValue="collageMakerOutput";
-		c=1;
 	}
-
-	//if a parameter is missing, print the correct format of the command
-	if (c==1)
-		printf("\nUsage:\e[36m ./collageMaker  [-n num_photos] [-t extension] [-o output]\e[0m\n");
 
 	myCollage->num_images = nValue;
 	myCollage->extension = tValue;
@@ -117,22 +75,35 @@ int scanInputValue (int argc, char** argv, struct collage_t* myCollage, int coll
 }
 
 
-void printSummary(struct collage_t* myCollage){
-	printf("SUMMARY\n");
-	printf("\tNumber of photos to use:\t%i\n", myCollage->num_images);
-	printf("\tName of the output file:\t%s.%s\n", myCollage->outputFileName, myCollage->extension);
-	printf("\tRGB of the background:\t\t%i-%i-%i\n",myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
-}
+int retrieveInput(struct collage_t* myCollage, int size){
+	int ret;
 
+	printf ("\nPress a key to see the available layouts for %i photos\n", myCollage->num_images);
+	getchar();
+	
+	ret=chooseLayout(myCollage, size);	
+	if (ret<0)
+		return -1;
+
+	ret=chooseColor(myCollage);	
+	if (ret<0)
+		return -1;
+
+	myCollage->images = (VipsImage**)malloc(sizeof(VipsImage*) * myCollage->num_images);
+
+	ret=chooseFiles(myCollage);	
+	if (ret<0)
+		return -1;
+	
+	return 0;
+}
 
 int extractExtension (char* photoName){
 	char* extension;
-
-	
   	extension = strrchr (photoName, '.');
 
 	if (extension == NULL){
-		printf("\e[91m\nError: this file doesn't have any extension.\n\n\e[0m");
+		printf("\e[91m\nThis file doesn't have any extension.\n\n\e[0m");
 		return -1;
 	}
 	if ((strcmp(extension,".png")!=0) && (strcmp(extension,".jpeg")!=0) &&
@@ -156,14 +127,14 @@ int chooseLayout(struct collage_t * myCollage, int size){
 		char layout_id = tolower(getchar());
 		if(layout_id != '\n')
 		{
-			printf("Choosen layout: %c\n", layout_id);
 			int layout_index = layout_id - 'a';
 			if( layout_index < 0 || layout_index > num_layouts)
 			{
-				printf("ERROR! Type a letter between 'a' and '%c' \n", 'a' + num_layouts - 1);
+				printf("\n\e[91mType a letter between 'a' and '%c'.\e[0m \n\n", 'a' + num_layouts - 1);
 			}
 			else
 			{
+				printf("Chosen layout: \e[36m %c \e[0m \n", layout_id);				
 				get_layout(&(myCollage->layout), myCollage->num_images, layout_index);
 				break;
 			}
@@ -173,7 +144,6 @@ int chooseLayout(struct collage_t * myCollage, int size){
 }
 
 
-
 int chooseColor(struct collage_t * myCollage){
 	char colorID[3];
 	int colID;
@@ -181,7 +151,7 @@ int chooseColor(struct collage_t * myCollage){
 
 	while(1)
 	{
-		printf("Choose one of the following colors or press \'p\' to choose the RGB values [q to exit]\n");
+		printf("\nChoose one of the following colors or press \'p\' to choose the RGB values [q to exit]\n");
 		RGBArray = printColor();
 		if (RGBArray==NULL)
 			return -1;
@@ -208,6 +178,9 @@ int chooseColor(struct collage_t * myCollage){
 			break;
 		}
 	}
+
+	printf("Chosen RGB values: \e[36m %i-%i-%i \e[0m \n", myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
+
 	return 0;
 }
 
@@ -222,8 +195,6 @@ void takeRGB(struct collage_t * myCollage)
 	printf ("B:\t");
 	takeSingleValue(&B);
 
-	printf("\nYou choose the following RGB values: %i-%i-%i\n", R, G, B);
-
 	myCollage->backgroundColour.r=R;
 	myCollage->backgroundColour.g=G;
 	myCollage->backgroundColour.b=B;
@@ -234,10 +205,9 @@ void takeSingleValue(int* value){
 	while (1)
 	{
 		scanf("%i",value );
-		printf("\n");
 		
 		if ((*value<0)||(*value>255)){
-			printf("Choose a value between 0 and 255\n");
+			printf("\e[91m Choose a value between 0 and 255 \e[0m \t ");
 		}
 		else 
 			break;
@@ -250,6 +220,7 @@ int chooseFiles(struct collage_t* myCollage){
 	struct stat fileStat;
 	
 	i=0;
+	printf("\n");
 	while(i != myCollage->num_images){
 		printf("Choose the name of the input photos to be used [q to exit]\n");
 		scanf ("%s", photoName);
@@ -264,7 +235,7 @@ int chooseFiles(struct collage_t* myCollage){
 			continue;
 		
 		if(stat(photoName,&fileStat) < 0) {
-   			printf("\e[91m\nError: the file doesn't exist.\n\n\e[0m");
+   			printf("\e[91mThe file doesn't exist. Choose another one.\n\n\e[0m");
         		continue;
 		}
  		
@@ -273,5 +244,15 @@ int chooseFiles(struct collage_t* myCollage){
 	}
 
 	return 1;
+}
+
+void printSummary(struct collage_t* myCollage){
+	printf("\n\e[36mSUMMARY\e[0m\n");
+	printf("\e[36m--------------------------------------------------------\e[0m\n");
+	printf("Number of photos to use:\t%i\n", myCollage->num_images);
+	printf("Name of the output file:\t%s.%s\n", myCollage->outputFileName, myCollage->extension);
+	printf("RGB of the background:\t\t%i-%i-%i\n",myCollage->backgroundColour.r, myCollage->backgroundColour.g, myCollage->backgroundColour.b);
+	printf("\e[36m--------------------------------------------------------\e[0m\n");
+	printf("\n");
 }
 
