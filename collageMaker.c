@@ -8,12 +8,15 @@
 void fit_image_into_frame(struct collage_t* collage, int image, int frame)
 {
 	VipsImage *temp_image;
-	int frame_width = get_frame_width(&collage->layout, frame) * collage->canvas_width;
-	int frame_height = get_frame_height(&collage->layout, frame) * collage->canvas_height;
-	double scale_x = (double)frame_width / (double)get_width(collage->images[image]);
-	double scale_y = (double)frame_height / (double)get_height(collage->images[image]);
+	int frame_width, frame_height;
+	double scale_x, scale_y, scale;
+
+	frame_width = get_frame_width(&collage->layout, frame) * collage->canvas_width;
+	frame_height = get_frame_height(&collage->layout, frame) * collage->canvas_height;
+	scale_x = (double)frame_width / (double)get_width(collage->images[image]);
+	scale_y = (double)frame_height / (double)get_height(collage->images[image]);
 	
-	double scale = (scale_x < scale_y)? scale_x : scale_y;
+	scale = (scale_x < scale_y)? scale_x : scale_y;
 	vips_resize(collage->images[image], &temp_image, scale,  NULL);
 	collage->images[image] = temp_image;
 }
@@ -54,8 +57,6 @@ void insert_collage_image(struct collage_t* collage, int frame_index, int image_
 
 	/* the image position is the frame position shifted by half of the difference between the 
 	width/height of the frame and width/height of the photo (difference may be 0)*/
-	printf("%d) box_width %d, image_width %d\n", frame_index, box_width, get_width(collage->images[image_index]));
-	printf("box_height %d, image_height %d\n", box_height, get_height(collage->images[image_index]));
 	image_posX = box_posX + ( box_width - get_width(collage->images[image_index]) ) / 2;
 	image_posY = box_posY + ( box_height - get_height(collage->images[image_index]) ) / 2;
 	
@@ -87,7 +88,7 @@ void create_collage(struct collage_t* myCollage)
 	frame_width_perc = get_frame_width(&myCollage->layout, frame_min_res);
 	frame_height_perc = get_frame_height(&myCollage->layout, frame_min_res);
 	frame_rot = get_frame_rot(&myCollage->layout, frame_min_res);
-	if( frame_rot != 0.0)
+	if(frame_rot != 0.0)
 	{
 		protect_image_from_flood(myCollage->images[min_res]);
 		rotate_image(&(myCollage->images[min_res]), frame_rot);
@@ -116,7 +117,6 @@ void create_collage(struct collage_t* myCollage)
 	
 	for(i = 0; i < myCollage->num_images; i++)
 	{
-		
 		int image_i = frame2photo[i];
 		
 		//scale photo to fit into the frame
@@ -153,6 +153,9 @@ void create_collage(struct collage_t* myCollage)
 	vips_image_write_to_file (canvas, filename, NULL);
 }
 
+
+
+
 int main(int argc, char **argv) {
 	int ret;
 
@@ -163,10 +166,9 @@ int main(int argc, char **argv) {
     		vips_error_exit ("Unable to start VIPS");
 		return -1;
 	}
-	else 
-		printf ("\nVips started...\t\e[34myes\e[0m\ncurrent version installed:\t\e[34m%s\n\n\e[0m", vips_version_string());
-
 	
+	printf ("\e[36;1m\n\n\t\t--- Welcome in collage maker ---\e[0m\n\n");
+
 	ret=scanInputValue (argc, argv, &myCollage, sizeof myCollage );
 	if (ret<0)
 		return -1;

@@ -4,9 +4,6 @@
 
 #include <vips/vips.h>
 
-//the function converts the RGB components into the XYZ ones
-int RGB2XYZ(int r, int g, int b, float* x, float* y, float* z);
-
 int get_width(const VipsImage *image);
 
 int get_height(const VipsImage *image);
