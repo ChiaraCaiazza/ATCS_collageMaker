@@ -26,8 +26,7 @@ int choose_layout(struct collage_t* collage, int size){
 				printf("\n\e[91mType a letter between 'a' and '%c'.\e[0m \n\n", 'a' + num_layouts - 1);
 			}
 			else
-			{
-				printf("Chosen layout: \e[36m %c \e[0m \n", layout_id);				
+			{			
 				get_layout(&(collage->layout), collage->num_images, layout_index);
 				break;
 			}
@@ -131,7 +130,7 @@ int choose_files(struct collage_t* collage){
 	i=0;
 	printf("\n");
 	while(i != collage->num_images){
-		printf("Choose the name of the input photos to be used [q to exit]\n");
+		printf("Choose the name of the photos to be used [q to exit]\n");
 		scanf ("%s", file_name);
 		printf("\n");
 		if (strcmp(file_name,"q") == 0){

@@ -71,11 +71,15 @@ void create_collage(struct collage_t* collage)
 	double frame_rot, frame_width_perc, frame_height_perc;
 	VipsImage *canvas;
 	
-	min_res = min_resol(collage->images, collage->num_images);
 	images_WHratio = image_width_over_height(collage->images, collage->num_images);
 	frames_WHratio = frame_width_over_height(&collage->layout);
 	frame2photo = find_best_match(images_WHratio, frames_WHratio, collage->num_images);
 	
+	//The algorithm chooses the photo with the minimum resolution 
+	//to decide the absolute dimensions of the final collage.
+	//It's better to reduce the size of the other photos
+	//to avoid the presence of pixelated images
+	min_res = min_resol(collage->images, collage->num_images);
 	for(i = 0; i < collage->num_images; i++)
 	{
 		if(frame2photo[i] == min_res)
@@ -83,8 +87,7 @@ void create_collage(struct collage_t* collage)
 			frame_min_res = i;
 			break;
 		}
-	}
-	
+	} 
 	frame_width_perc = get_frame_width(&collage->layout, frame_min_res);
 	frame_height_perc = get_frame_height(&collage->layout, frame_min_res);
 	frame_rot = get_frame_rot(&collage->layout, frame_min_res);
@@ -94,9 +97,11 @@ void create_collage(struct collage_t* collage)
 		rotate_image(&(collage->images[min_res]), frame_rot);
 		frame_rot = frame_rot / (180.0 / M_PI);
 		
+		//W_photo / (W_frame * |sin(alpha)| + (H_frame * |cos(alpha)|))
 		collage->canvas_width = (int) (get_width(collage->images[min_res]) / 
 										(frame_height_perc * fabs(sin(frame_rot)) 
 											+ frame_width_perc * fabs(cos(frame_rot))));
+		//H_photo / (H_frame * |sin(alpha)| + (W_frame * |cos(alpha)|))
 		collage->canvas_height = (int) (get_height(collage->images[min_res]) / 
 										(frame_height_perc * fabs(cos(frame_rot)) 
 											+ frame_width_perc * fabs(sin(frame_rot))));
@@ -104,24 +109,26 @@ void create_collage(struct collage_t* collage)
 	}
 	else
 	{
-		//photo width / (% width frame)
+		//W_photo / W_frame
 		collage->canvas_width = (int) (get_width(collage->images[min_res]) / 
 										frame_width_perc);
-		//photo height / (% height frame)
+		//W_photo / W_frame
 		collage->canvas_height = (int) (get_height(collage->images[min_res]) / 
 										frame_height_perc);
 	}
 
-	//create black canvas
+
+	//create blank canvas
 	canvas = create_blank_canvas(collage->canvas_width, collage->canvas_height);
+	
 	
 	for(i = 0; i < collage->num_images; i++)
 	{
 		int image_i = frame2photo[i];
 		
-		//scale photo to fit into the frame
 		if(image_i != min_res)
 		{
+			//scale photo
 			fit_image_into_frame(collage, image_i, i);	
 			protect_image_from_flood(collage->images[image_i]);
 			

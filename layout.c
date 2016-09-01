@@ -162,9 +162,9 @@ int* print_colour()
 	config_init(&layout_config);
 	if (!config_read_file(&layout_config, "./layout.cfg")) {
         	fprintf(stderr, "%s:%d - %s\n",
-           	config_error_file(&layout_config),
-            	config_error_line(&layout_config),
-            	config_error_text(&layout_config));
+           				config_error_file(&layout_config),
+            			config_error_line(&layout_config),
+            			config_error_text(&layout_config));
         	config_destroy(&layout_config);
         	return NULL;
     	}
