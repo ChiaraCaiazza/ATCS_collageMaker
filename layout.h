@@ -30,7 +30,7 @@ int get_layout(struct layout_t * out, int num_frame, int id_layout);
 void destroy_layout(struct layout_t * layout);
 int get_num_layouts(int num_frame);
 void print_layouts(int num_frame);
-int* printColor();
+int* print_colour();
 double* frame_width_over_height(struct layout_t* layout);
 
 #endif

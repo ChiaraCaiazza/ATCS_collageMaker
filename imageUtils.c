@@ -1,17 +1,6 @@
 #include "imageUtils.h"
 #include <math.h>
 
-/*int 
-RGB2XYZ(int r, int g, int b, float* x, float* y, float* z){
-	int ret;
-	float rr, gg, bb;
-	ret = vips_col_sRGB2scRGB_8(r, g, b, &rr, &gg, &bb);
-	if (ret<0)
-		return ret;
-	ret = vips_col_scRGB2XYZ(rr, gg, bb, x, y, z);
-	return ret;
-}*/
-
 int get_width(const VipsImage *image) {
 	return vips_image_get_width(image);
 }
@@ -20,10 +9,12 @@ int get_height(const VipsImage *image) {
 	return vips_image_get_height(image);
 }
 
+//horizontal image resolution in pixels per millimeter
 double get_horiz_resol(const VipsImage *image) {
 	return vips_image_get_xres(image);
 }
 
+//vertical image resolution in pixels per millimeter
 double get_vert_resol(const VipsImage *image) {
 	return vips_image_get_yres(image);
 }
