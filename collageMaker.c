@@ -171,9 +171,6 @@ int main(int argc, char **argv) {
     		vips_error_exit ("Unable to start VIPS");
 		return -1;
 	}
-	
-	printf ("\e[36;1m\n\n\t\t--- Welcome in collage maker ---\e[0m\n\n");
-
 	ret = scan_input(argc, argv, &collage, sizeof collage );
 	if (ret<0)
 		return -1;
