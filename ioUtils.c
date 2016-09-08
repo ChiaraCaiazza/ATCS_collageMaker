@@ -8,6 +8,15 @@
 #include "layout.h"
 #include "imageUtils.h"
 
+void show_help()
+{
+	printf("\nUSAGE\n");
+	printf("./collageMaker  [-n num] [-t string] [-o string]\n");
+	printf("PARAMETERS\n");
+	printf("-n\tnumber of photos\n");
+	printf("-t\textension of the collage (png, jpeg, gif)\n");
+	printf("-o\tname of the final collage\n\n");
+}
 
 int choose_layout(struct collage_t* collage, int size){
 	int num_layouts = get_num_layouts(collage->num_images);
@@ -167,10 +176,8 @@ void print_summary(struct collage_t* collage){
 int scan_input(int argc, char** argv, struct collage_t* collage, int collage_size){	
 	int  n_val = 0, c;
 	char *t_val = NULL, *o_val = NULL;
-	
-	printf("Usage:\e[36m ./collageMaker  [-n num_photos] [-t extension] [-o output]\e[0m\n\n");
 
-	while ((c = getopt(argc, argv, "n:t:o:")) != -1)
+	while ((c = getopt(argc, argv, "n:t:o:h")) != -1)
 		switch (c){
 			case 'n':
 				n_val = atoi(optarg);
@@ -196,24 +203,26 @@ int scan_input(int argc, char** argv, struct collage_t* collage, int collage_siz
 			case 'o':
 				o_val = optarg;
 				break;
+			case 'h':
 			case '?':
-				printf("\nUsage:\e[36m ./collageMaker  [-n num_photos] [-t extension] [-o output]\e[0m\n");
+				show_help();
 				return -1;
 			default:
 				return -1;
   		}
 
+	printf ("\e[36;1m\n\n\t\t--- Welcome in collage maker ---\e[0m\n\n");
 	//check if all parameters have been set
 	if (n_val == 0){
-		printf("You haven't chosen a valid number of photos.\nThe default value n=\e[36m2\e[0m will be used.\n");
+		printf("Number of photos: \e[36m2\e[0m (DEFAULT)\n");
 		n_val = 2;
 	}
 	if (t_val == NULL){
-		printf("You haven't chosen a valid photo extension for the output.\nThe default extension \e[36m.png\e[0m will be used.\n");
+		printf("Extension of collage: \e[36mpng\e[0m (DEFAULT)\n");
 		t_val = "png";
 	}
 	if (o_val == NULL){
-		printf("You haven't chosen a valid name for the output.\nThe default name \e[36m\"collageMakerOutput\"\e[0m will be used.\n");
+		printf("Name of collage: \e[36mcollage_output\e[0m (DEFAULT)\n");
 		o_val = "collage_output";
 	}
 
