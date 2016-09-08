@@ -121,6 +121,9 @@ void protect_image_from_flood(VipsImage* image)
 	vips_draw_rect1(image, 255.0, 0, 0, get_width(image), get_height(image), NULL);
 }
 
+
+//new_x = x * cos(alpha) - y * sin(alpha)
+//new_y = x * sin(alpha) + y * cos(alpha)
 void rotate_image(VipsImage** image, double rotation)
 {
 	VipsImage* temp_image;
