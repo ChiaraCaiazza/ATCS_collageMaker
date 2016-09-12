@@ -1,17 +1,6 @@
 #include "imageUtils.h"
 #include <math.h>
 
-/*int 
-RGB2XYZ(int r, int g, int b, float* x, float* y, float* z){
-	int ret;
-	float rr, gg, bb;
-	ret = vips_col_sRGB2scRGB_8(r, g, b, &rr, &gg, &bb);
-	if (ret<0)
-		return ret;
-	ret = vips_col_scRGB2XYZ(rr, gg, bb, x, y, z);
-	return ret;
-}*/
-
 int get_width(const VipsImage *image) {
 	return vips_image_get_width(image);
 }
@@ -20,32 +9,36 @@ int get_height(const VipsImage *image) {
 	return vips_image_get_height(image);
 }
 
+//horizontal image resolution in pixels per millimeter
 double get_horiz_resol(const VipsImage *image) {
 	return vips_image_get_xres(image);
 }
 
+//vertical image resolution in pixels per millimeter
 double get_vert_resol(const VipsImage *image) {
 	return vips_image_get_yres(image);
 }
 
 int min_resol(VipsImage **img_array, int num_elem){
-	int i, i_app = 0;
-	double min = get_horiz_resol(img_array[0])*get_vert_resol(img_array[0]);
-	for (i=1; i<num_elem; i++) {
-		if (get_horiz_resol(img_array[i])*get_vert_resol(img_array[i]) < min){
-			min = get_horiz_resol(img_array[i])*get_vert_resol(img_array[i]);
-			i_app = i;
+	int i, res_min_index = 0;
+	double res_min = get_horiz_resol(img_array[0]) * get_vert_resol(img_array[0]);
+	for (i=1; i < num_elem; i++) {
+		int resolution = get_horiz_resol(img_array[i]) * get_vert_resol(img_array[i]);
+		if ( resolution < res_min){
+			res_min = resolution;
+			res_min_index = i;
 		}
 	}
-	return i_app;
+	return res_min_index;
 }
 
 int min_height(VipsImage **img_array, int num_elem){
 	int i, i_app = 0;
 	int min = get_height(img_array[0]);
 	for (i=1; i<num_elem; i++){
-		if (get_height(img_array[i]) < min){
-			min = get_height(img_array[i]);
+		int height = get_height(img_array[i]);
+		if (height < min){
+			min = height;
 			i_app = i;
 		}
 	}
@@ -56,8 +49,9 @@ int min_width(VipsImage **img_array, int num_elem){
 	int i, i_app = 0;
 	int min = get_width(img_array[0]);
 	for (i=1; i<num_elem; i++){
-		if (get_width(img_array[i]) < min){
-			min = get_width(img_array[i]);
+		int width = get_width(img_array[i]);
+		if (width < min){
+			min = width;
 			i_app = i;
 		}
 	}
@@ -127,6 +121,9 @@ void protect_image_from_flood(VipsImage* image)
 	vips_draw_rect1(image, 255.0, 0, 0, get_width(image), get_height(image), NULL);
 }
 
+
+//new_x = x * cos(alpha) - y * sin(alpha)
+//new_y = x * sin(alpha) + y * cos(alpha)
 void rotate_image(VipsImage** image, double rotation)
 {
 	VipsImage* temp_image;

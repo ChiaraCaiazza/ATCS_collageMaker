@@ -52,11 +52,11 @@ int get_layout(struct layout_t* out, int num_frame, int id_layout)
 {
 	config_setting_t *category_list, *category, *layout_list, *layout, *frame_list, *frame;
 	config_setting_t *pos, *size;
-
 	config_t layout_config;
 	int frame_length, i;
+
 	out->num_frames = num_frame;
-	out->perc_to_pixel = 0; // 
+	out->perc_to_pixel = 0; 
 	out->frames = (struct frame_t*) malloc (num_frame * sizeof(struct frame_t));
 
 	config_init(&layout_config);
@@ -143,7 +143,7 @@ void print_layouts(int num_frame)
 	{
 		layout = config_setting_get_elem(layout_list, i);
 		config_setting_lookup_string(layout, "image", &ascii_image);
-		printf(" %c)\n", 'A' + i);
+		printf(" %c)\n", 'a' + i);
 		printf("%s\n", ascii_image);
 	}
 	
@@ -151,41 +151,41 @@ void print_layouts(int num_frame)
 }
 
 
-int* printColor()
+int* print_colour()
 {
-	config_setting_t *colorList, *layout;
-	config_t layoutConfig;
-	int colorLength, i;
-	const char* colorValue;
-	int* RGBArray;
+	config_setting_t *color_list, *layout;
+	config_t layout_config;
+	int color_len, i;
+	const char* color_value;
+	int* RGB_array;
 
-	config_init(&layoutConfig);
-	if (!config_read_file(&layoutConfig, "./layout.cfg")) {
+	config_init(&layout_config);
+	if (!config_read_file(&layout_config, "./layout.cfg")) {
         	fprintf(stderr, "%s:%d - %s\n",
-           	config_error_file(&layoutConfig),
-            	config_error_line(&layoutConfig),
-            	config_error_text(&layoutConfig));
-        	config_destroy(&layoutConfig);
+           				config_error_file(&layout_config),
+            			config_error_line(&layout_config),
+            			config_error_text(&layout_config));
+        	config_destroy(&layout_config);
         	return NULL;
     	}
 	
-	colorList = config_lookup(&layoutConfig, "application.colors");
-	colorLength = config_setting_length(colorList);
-	RGBArray=malloc(sizeof (int)*3*colorLength);
-	for(i = 0; i < colorLength; i++)
+	color_list = config_lookup(&layout_config, "application.colors");
+	color_len = config_setting_length(color_list);
+	RGB_array=malloc(sizeof (int)*3*color_len);
+	for(i = 0; i < color_len; i++)
 	{
-		layout = config_setting_get_elem(colorList, i);
-		config_setting_lookup_string(layout, "name", &colorValue);
+		layout = config_setting_get_elem(color_list, i);
+		config_setting_lookup_string(layout, "name", &color_value);
 		printf(" %i)\t", i+1);
-		printf("%s\n", colorValue);
-		config_setting_lookup_int(layout, "r", &RGBArray[i*3]);
-		config_setting_lookup_int(layout, "g", &RGBArray[i*3+1]);
-		config_setting_lookup_int(layout, "b", &RGBArray[i*3+2]);
-		printf("\tR-G-B: %i-%i-%i\n",RGBArray[i*3],RGBArray[i*3+1],RGBArray[i*3+2]);
+		printf("%s\n", color_value);
+		config_setting_lookup_int(layout, "r", &RGB_array[i*3]);
+		config_setting_lookup_int(layout, "g", &RGB_array[i*3+1]);
+		config_setting_lookup_int(layout, "b", &RGB_array[i*3+2]);
+		printf("\tR-G-B: %i-%i-%i\n",RGB_array[i*3],RGB_array[i*3+1],RGB_array[i*3+2]);
 	}
 	
-	config_destroy(&layoutConfig);
-	return RGBArray;
+	config_destroy(&layout_config);
+	return RGB_array;
 }
 
 double* frame_width_over_height(struct layout_t* layout){

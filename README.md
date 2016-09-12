@@ -1,11 +1,19 @@
-# collageMaker
+#CollageMaker
+CollageMaker is a free image processing system to create collages of photos. 
+It has multiple layouts to choose from and many colours for the background, 
+and supports the most used image formats (PNG, JPEG and GIF).
 
-Compile on Debian:
-		gcc -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0 -lconfig -Wall collageMaker.c ioUtils.c layout.c imageUtils.c `pkg-config --cflags glib-2.0` `pkg-config --libs glib-2.0` `pkg-config vips --cflags --libs` -o collageMaker
-(the same command used for MacOS may work)
 
-Compile on MacOS:
-		gcc -g -lconfig -Wall collageMaker.c ioUtils.c layout.c imageUtils.c  `pkg-config vips --cflags --libs` -o collageMaker
+###Dependencies
+1. [libconfig 1.6](https://github.com/hyperrealm/libconfig)
+2. [libvips 8.4](https://github.com/jcupitt/libvips)
+	 * glib2.0-dev
+	 * libpng
+	 * libjpeg
+	 * libgif
 
-Execution:
-		./collageMaker [-n num (default=2)] [-t string (default=null)] [-o string (default=null)]
+###Execution:
+
+```
+./collageMaker [-n num (default=2)] [-t string (default=null)] [-o string (default=null)]
+```

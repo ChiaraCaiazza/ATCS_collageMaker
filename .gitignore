@@ -56,3 +56,5 @@ output.*
 collageMaker
 
 collageMaker.dSYM/Contents/Info.plist
+
+*.o
