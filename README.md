@@ -6,7 +6,7 @@ and supports the most used image formats (PNG, JPEG and GIF).
 
 ###Dependencies
 1. [libconfig 1.6](https://github.com/hyperrealm/libconfig)
-2. [libvips 8.3.2](https://github.com/jcupitt/libvips)
+2. [libvips 8.4](https://github.com/jcupitt/libvips)
 	 * glib2.0-dev
 	 * libpng
 	 * libjpeg
