@@ -12,6 +12,24 @@ and supports the most used image formats (PNG, JPEG and GIF).
 	 * libjpeg
 	 * libgif
 
+####Install Dependencies
+1. Use a pkg manager like apt-get(Linux-like) or brew(Mac OS)
+
+```
+apt-get install libconfig
+apt-get install vips
+```
+
+2. Compile and install libraries inside "lib" directory.
+
+Change the current directory to the desired library and execute the following commands
+
+```
+./configure
+make
+make install
+```
+
 ###Execution:
 
 ```
