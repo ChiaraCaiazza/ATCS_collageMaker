@@ -13,6 +13,8 @@ and supports the most used image formats (PNG, JPEG and GIF).
 	 * libgif
 
 ####Install Dependencies
+In order to install the dependencies, there are two methods:
+
 * Use a pkg manager like apt-get(Linux-like) or brew(Mac OS)
 ```
 apt-get install libconfig
